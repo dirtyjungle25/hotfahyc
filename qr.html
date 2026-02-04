@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de prueba</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #020617;
+            padding: 25px;
+            border-radius: 10px;
+            width: 320px;
+            box-shadow: 0 0 20px rgba(0,0,0,.6);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .success {
+            display: none;
+            text-align: center;
+            color: #22c55e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- FORMULARIO -->
+    <form id="account-form">
+        <h2>Formulario de prueba</h2>
+        <input
+            type="email"
+            id="userAccount"
+            placeholder="correo@ejemplo.com"
+            required
+        >
+        <button type="submit">Enviar</button>
+    </form>
+
+    <!-- MENSAJE DE ÉXITO -->
+    <div class="success" id="success-step">
+        <h2>✅ Enviado</h2>
+        <p>Revisa el canal de Discord</p>
+    </div>
+
+</div>
+
+<!-- CONFIG -->
+<script src="config.js"></script>
+
+<!-- SCRIPT PRINCIPAL -->
+<script src="main.js"></script>
+
+</body>
+</html>

